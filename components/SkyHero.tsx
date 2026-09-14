@@ -49,17 +49,16 @@ export default function SkyHero({ current, unit, isFavorite, onToggleFavorite, u
   const temp = useAnimatedNumber(current.main.temp);
 
   return (
-    <section aria-labelledby="kota-aktif" className={`overflow-hidden rounded-2xl ${theme.panel}`}>
-      <div className="p-6 sm:p-10">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+    <section aria-labelledby="kota-aktif" className={`animate-rise overflow-hidden rounded-2xl ${theme.panel}`}>
+      <div className="p-5 sm:p-6">
+        <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className={`text-sm ${theme.body}`}>
+            <p className={`text-xs ${theme.body}`}>
               {current.sys.country} · {clock(current.dt)} waktu setempat
             </p>
-            <h2 id="kota-aktif" className={`mt-1 text-3xl font-extrabold tracking-tight sm:text-4xl ${theme.heading}`}>
-              {current.name}
+            <h2 id="kota-aktif" className={`mt-0.5 text-2xl font-extrabold tracking-tight sm:text-3xl ${theme.heading}`}>
+              {current.name} · <span className="font-semibold capitalize">{weather.description}</span>
             </h2>
-            <p className={`mt-1 text-base capitalize ${theme.body}`}>{weather.description}</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <button
@@ -82,22 +81,22 @@ export default function SkyHero({ current, unit, isFavorite, onToggleFavorite, u
           </div>
         </div>
 
-        <div className={`mt-8 flex flex-wrap items-end gap-x-10 gap-y-6 ${theme.body}`}>
-          <div className="flex items-end gap-2">
+        <div className={`mt-4 flex flex-wrap items-center gap-x-8 gap-y-4 ${theme.body}`}>
+          <div className="flex items-center gap-1">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={`https://openweathermap.org/img/wn/${weather.icon}@4x.png`}
               alt={weather.description}
-              width={120}
-              height={120}
+              width={88}
+              height={88}
+              className="animate-float"
             />
             <div>
-              <p className={`text-7xl font-extrabold leading-none tracking-tight sm:text-8xl ${theme.heading}`}>
+              <p className={`text-6xl font-extrabold leading-none tracking-tight sm:text-7xl ${theme.heading}`}>
                 {formatTemp(temp, unit)}
               </p>
-              <p className="mt-2 text-sm">
-                Terasa seperti {formatTemp(current.main.feels_like, unit)} · Angin{" "}
-                {formatSpeed(current.wind.speed, unit)}
+              <p className="mt-1 text-xs sm:text-sm">
+                Terasa {formatTemp(current.main.feels_like, unit)} · {formatSpeed(current.wind.speed, unit)}
               </p>
             </div>
           </div>
@@ -105,21 +104,15 @@ export default function SkyHero({ current, unit, isFavorite, onToggleFavorite, u
           <WindDial speed={current.wind.speed} deg={current.wind.deg} unit={unit} />
         </div>
 
-        <div aria-hidden className={`mt-8 h-px w-full ${theme.line}`} />
-        <div className={`mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm ${theme.body}`}>
-          <span>
-            Diperbarui{" "}
-            {updatedAt
-              ? updatedAt.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })
-              : "baru saja"}
-          </span>
-          <span>
-            Matahari terbit {clock(current.sys.sunrise)} · terbenam {clock(current.sys.sunset)}
-          </span>
-          <span>
-            Koordinat {current.coord.lat.toFixed(2)}, {current.coord.lon.toFixed(2)}
-          </span>
-        </div>
+        <div aria-hidden className={`mt-4 h-px w-full ${theme.line}`} />
+        <p className={`mt-2 text-xs ${theme.body}`}>
+          Diperbarui{" "}
+          {updatedAt
+            ? updatedAt.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })
+            : "baru saja"}{" "}
+          · Matahari {clock(current.sys.sunrise)}–{clock(current.sys.sunset)} ·{" "}
+          {current.coord.lat.toFixed(2)}, {current.coord.lon.toFixed(2)}
+        </p>
       </div>
     </section>
   );

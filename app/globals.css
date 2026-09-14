@@ -54,6 +54,37 @@ body {
   transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
 }
 
+/* Animasi hanya bila pengguna tidak meminta reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .animate-float {
+    animation: float 7s ease-in-out infinite;
+  }
+  .animate-rise {
+    animation: rise 500ms ease-out both;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

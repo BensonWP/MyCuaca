@@ -14,7 +14,7 @@ interface Props {
 export default function WindDial({ speed, deg, unit }: Props) {
   return (
     <div role="img" aria-label={`Angin ${formatSpeed(speed, unit)} dari arah ${windDirection(deg)}`}>
-      <svg viewBox="0 0 96 96" className="h-24 w-24" aria-hidden>
+      <svg viewBox="0 0 96 96" className="h-16 w-16 sm:h-20 sm:w-20" aria-hidden>
         <circle cx="48" cy="48" r="44" fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.5" />
         <text x="48" y="14" textAnchor="middle" fontSize="10" fill="currentColor" opacity="0.8">U</text>
         <text x="48" y="88" textAnchor="middle" fontSize="10" fill="currentColor" opacity="0.8">S</text>
