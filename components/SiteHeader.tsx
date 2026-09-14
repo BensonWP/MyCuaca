@@ -43,7 +43,7 @@ export default function SiteHeader() {
                     aria-current={active ? "page" : undefined}
                     className={`stateful inline-flex min-h-11 items-center rounded-lg border px-4 py-2 text-sm font-semibold ${
                       active
-                        ? "border-sky-700 bg-sky-700 text-white dark:border-sky-500 dark:bg-sky-600"
+                        ? "border-sky-700 bg-sky-700 text-white dark:border-sky-500 dark:bg-sky-700"
                         : "border-zinc-300 text-zinc-800 hover:border-sky-700 hover:text-sky-800 dark:border-zinc-700 dark:text-zinc-200 dark:hover:text-sky-300"
                     }`}
                   >

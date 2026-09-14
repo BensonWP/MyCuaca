@@ -126,7 +126,7 @@ export default function MapView({ lat, lon, cityName, layer, onLayerChange, dark
                     aria-pressed={active}
                     className={`stateful min-h-11 px-4 py-2 text-sm font-semibold ${
                       active
-                        ? "bg-sky-700 text-white dark:bg-sky-600"
+                        ? "bg-sky-700 text-white dark:bg-sky-700"
                         : "bg-white text-zinc-800 hover:bg-zinc-100 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-zinc-900"
                     }`}
                   >

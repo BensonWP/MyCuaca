@@ -75,7 +75,7 @@ export default function CitySearch({ compact = false }: { compact?: boolean }) {
           onFocus={() => setOpen(true)}
           placeholder="Cari kota, mis. Bandung"
           aria-label="Cari kota"
-          className="min-h-11 w-full rounded-lg border border-zinc-400 bg-white px-4 py-2.5 text-sm text-zinc-950 shadow-sm outline-none focus:border-sky-700 focus:ring-2 focus:ring-sky-200 dark:border-zinc-600 dark:bg-zinc-950 dark:text-zinc-50 dark:focus:ring-sky-900"
+          className="min-h-11 w-full rounded-lg border border-zinc-400 bg-white px-4 py-2.5 text-sm text-zinc-950 shadow-sm outline-none placeholder:text-zinc-500 focus:border-sky-700 focus:ring-2 focus:ring-sky-200 dark:border-zinc-600 dark:bg-zinc-950 dark:text-zinc-50 dark:placeholder:text-zinc-400 dark:focus:ring-sky-900"
         />
         <button
           type="submit"

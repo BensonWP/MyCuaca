@@ -21,14 +21,8 @@
   --font-sans: var(--font-sans);
 }
 
-/* Fallback tanpa JavaScript. Dengan JavaScript, class .dark yang menang karena selektor :root.dark lebih spesifik. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #09090b;
-    --foreground: #fafafa;
-    --surface: #18181b;
-  }
-}
+/* Tanpa JavaScript, tema terang yang tampil agar seluruh halaman tetap koheren:
+   varian gelap Tailwind membutuhkan class .dark yang dipasang skrip anti-flash. */
 
 body {
   background: var(--background);
