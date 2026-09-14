@@ -1,0 +1,31 @@
+# DESIGN.md: MyCuaca
+
+## Identitas
+
+MyCuaca adalah aplikasi cuaca harian berbahasa Indonesia. Kepribadiannya tenang dan membantu: angka besar yang mudah dibaca sekilas, penjelasan secukupnya, tanpa dekorasi yang mengalihkan perhatian dari keputusan pengguna (baju apa, bawa payung atau tidak, kapan keluar rumah).
+
+## Palet
+
+- Netral: zinc dan putih/hitam untuk permukaan, teks, dan garis.
+- Aksen tunggal: sky-700 untuk tindakan utama, tautan aktif, dan penanda.
+- Latar hero mengikuti kondisi cuaca dari kode ikon OpenWeather (cerah, malam, berawan, hujan, badai, salju, kabut). Warna hero selalu dipasangkan dengan teks yang lolos kontras AA.
+- Warna semantik (merah, amber, sky) hanya untuk status galat, offline, dan info, selalu disertai teks penjelasan, bukan warna saja.
+
+## Tipografi
+
+Plus Jakarta Sans untuk seluruh antarmuka. Alasan: keterbacaan angka suhu besar, dukungan latin untuk Bahasa Indonesia, dan karakter yang cocok dengan konteks kota Indonesia. Judul memakai kalimat biasa (sentence case), tanpa label huruf besar berspasi lebar.
+
+## Motif
+
+Satu garis horizon tipis dipakai ulang sebagai pemisah bab: di bawah hero ringkasan dan di bawah judul tiap halaman. Alasan: menghubungkan langit sebagai sumber data dengan linimasa prakiraan dan skala udara.
+
+## Bentuk dan jarak
+
+- Kontrol interaktif: sudut `rounded-lg`.
+- Permukaan dan panel: sudut `rounded-2xl`.
+- Tidak ada bentuk pil penuh di elemen mana pun.
+- Skala jarak mengikuti bawaan Tailwind (4, 8, 12, 16, 24, 32, 48, 64). Tidak ada nilai acak.
+
+## Dial
+
+ENERGY 2 / RHYTHM 3 / MOTION 1. Halaman ringkasan boleh ekspresif lewat suhu besar dan latar cuaca, ritme tiap halaman berbeda sesuai kebutuhan datanya, dan gerakan hanya untuk perubahan status (mode peta, hari terpilih, status muat).
