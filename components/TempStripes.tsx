@@ -2,7 +2,7 @@
 
 import type { DailyCard } from "@/lib/forecast";
 import { Unit, formatTemp } from "@/lib/storage";
-import { formatDay, tempStripeColor } from "@/lib/forecast";
+import { formatDay } from "@/lib/forecast";
 
 interface Props {
   days: DailyCard[];
@@ -21,7 +21,7 @@ export default function TempStripes({ days, selectedKey, onSelect, unit }: Props
             key={day.key}
             onClick={() => onSelect(day.key)}
             aria-pressed={active}
-            aria-label={`${formatDay(day.date)}, maks ${formatTemp(day.max, unit)}, min ${formatTemp(day.min, unit)}, hujan ${Math.round(day.pop * 100)} persen`}
+            aria-label={`${formatDay(day.date)}, ${day.description}, maks ${formatTemp(day.max, unit)}, min ${formatTemp(day.min, unit)}, hujan ${Math.round(day.pop * 100)} persen`}
             className={`stateful min-h-11 rounded-lg border p-2 text-center sm:p-3 ${
               active
                 ? "border-sky-700 bg-sky-50 dark:border-sky-500 dark:bg-sky-950"
@@ -31,12 +31,15 @@ export default function TempStripes({ days, selectedKey, onSelect, unit }: Props
             <span className="block truncate text-xs font-bold capitalize text-zinc-950 sm:text-sm dark:text-white">
               {day.date.toLocaleDateString("id-ID", { weekday: "short" })}
             </span>
-            <span
-              aria-hidden
-              style={{ backgroundColor: tempStripeColor(day.max) }}
-              className="mx-auto mt-2 block h-20 w-full rounded-sm sm:h-28"
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`https://openweathermap.org/img/wn/${day.icon}@2x.png`}
+              alt={day.description}
+              width={48}
+              height={48}
+              className="mx-auto mt-1"
             />
-            <span className="mt-2 block text-sm font-bold text-zinc-950 dark:text-white">
+            <span className="mt-1 block text-sm font-bold text-zinc-950 dark:text-white">
               {formatTemp(day.max, unit)}
             </span>
             <span className="mt-1 block text-xs font-semibold text-sky-800 dark:text-sky-300">

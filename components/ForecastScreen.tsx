@@ -7,7 +7,7 @@ import TempCurve from "@/components/TempCurve";
 import HourlyTimeline from "@/components/HourlyTimeline";
 import WarningList from "@/components/WarningList";
 import { ErrorBlock, Horizon, LoadingBlock, OfflineBanner, RefreshBanner } from "@/components/Status";
-import { aggregateDaily, formatDay, groupByDay, stripeLegend, warningsForDay } from "@/lib/forecast";
+import { aggregateDaily, formatDay, groupByDay, warningsForDay } from "@/lib/forecast";
 
 export default function ForecastScreen() {
   const { city, matchedData, loading, error, offline, updatedAt, unit, refresh } = useWeather();
@@ -40,7 +40,6 @@ export default function ForecastScreen() {
   const activeItems = groupByDay(data.forecast.list).get(activeKey) ?? [];
   const warnings = warningsForDay(activeItems).map((warning) => warning.text);
   const activeDay = days.find((day) => day.key === activeKey);
-  const legend = stripeLegend();
 
   return (
     <div className="flex flex-col gap-5">
@@ -54,11 +53,7 @@ export default function ForecastScreen() {
         </h2>
         <Horizon />
         <p className="mt-2 text-sm text-zinc-700 dark:text-zinc-300">
-          Strip menunjukkan suhu maksimum harian.{" "}
-          <span className="inline-flex items-center gap-1.5 align-middle">
-            <span aria-hidden className="inline-block h-2 w-8 rounded-sm" style={{ background: `linear-gradient(90deg, ${legend.colors.join(", ")})` }} />
-            <span className="text-xs text-zinc-500 dark:text-zinc-400">{legend.cold}–{legend.hot}</span>
-          </span>
+          Pilih satu hari untuk melihat rincian cuacanya.
         </p>
       </div>
 

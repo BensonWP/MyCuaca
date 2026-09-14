@@ -62,32 +62,7 @@ export function formatHour(timestamp: number): string {
   });
 }
 
-// Skala absolut biru-merah untuk pita suhu: dingin = biru, panas = merah.
-// Skala absolut (bukan normalisasi min-maks) agar di iklim tropis yang variasinya
-// kecil, strip tidak semuanya menempel di ujung merah.
-const STRIPE_STOPS = [20, 22, 24, 26, 28, 30, 32, 34, 36];
-const STRIPE_COLORS = [
-  "#1d4ed8",
-  "#2563eb",
-  "#0284c7",
-  "#0d9488",
-  "#65a30d",
-  "#ca8a04",
-  "#ea580c",
-  "#dc2626",
-  "#b91c1c",
-];
 
-export function tempStripeColor(temp: number): string {
-  for (let i = 0; i < STRIPE_STOPS.length; i++) {
-    if (temp <= STRIPE_STOPS[i]) return STRIPE_COLORS[i];
-  }
-  return STRIPE_COLORS[STRIPE_COLORS.length - 1];
-}
-
-export function stripeLegend(): { colors: string[]; cold: string; hot: string } {
-  return { colors: STRIPE_COLORS, cold: "20° ke bawah", hot: "36° ke atas" };
-}
 
 // Ambang peringatan ditulis eksplisit agar tidak menjadi angka misterius di UI.
 export const HEAVY_RAIN_3H_MM = 10;
