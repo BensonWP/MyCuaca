@@ -1,85 +1,80 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useWeather } from "@/app/weather-provider";
 import CitySearch from "@/components/CitySearch";
 import ThemeSwitch from "@/components/ThemeSwitch";
 import UnitSwitch from "@/components/UnitSwitch";
+import TabNav, { type Tab } from "@/components/TabNav";
 
-const NAV = [
-  { href: "/", label: "Ringkasan" },
-  { href: "/prakiraan", label: "Prakiraan" },
-  { href: "/peta", label: "Peta" },
-  { href: "/udara", label: "Udara" },
-  { href: "/kota", label: "Kota" },
-];
+interface Props {
+  tabs: Tab[];
+  activeTab: string;
+  onTabChange: (id: string) => void;
+}
 
-export default function SiteHeader() {
-  const pathname = usePathname();
+export default function SiteHeader({ tabs, activeTab, onTabChange }: Props) {
   const { unit, switchUnit } = useWeather();
 
   return (
     <header className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 py-4 sm:px-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <Link href="/" className="text-xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+          <button onClick={() => onTabChange("ringkasan")} className="text-xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
             <span className="text-sky-700 dark:text-sky-300">My</span>Cuaca
-          </Link>
+          </button>
           <div className="flex flex-wrap items-center gap-2">
             <ThemeSwitch />
             <UnitSwitch unit={unit} onChange={switchUnit} />
           </div>
         </div>
         <CitySearch compact />
-        <nav aria-label="Navigasi utama" className="hidden sm:block">
-          <ul className="flex flex-wrap gap-2">
-            {NAV.map((item) => {
-              const active = pathname === item.href;
-              return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    aria-current={active ? "page" : undefined}
-                    className={`stateful inline-flex min-h-11 items-center rounded-lg border px-4 py-2 text-sm font-semibold ${
-                      active
-                        ? "border-sky-700 bg-sky-700 text-white dark:border-sky-500 dark:bg-sky-700"
-                        : "border-zinc-300 text-zinc-800 hover:border-sky-700 hover:text-sky-800 dark:border-zinc-700 dark:text-zinc-200 dark:hover:text-sky-300"
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
+        {/* Desktop tab nav */}
+        <div className="hidden sm:block">
+          <TabNav tabs={tabs} active={activeTab} onChange={onTabChange} />
+        </div>
       </div>
+      {/* Mobile bottom tab nav */}
       <nav
         aria-label="Navigasi seluler"
         className="fixed inset-x-0 bottom-0 z-40 border-t border-zinc-200 bg-white pb-[env(safe-area-inset-bottom)] sm:hidden dark:border-zinc-800 dark:bg-zinc-950"
       >
-        <ul className="grid grid-cols-5">
-          {NAV.map((item) => {
-            const active = pathname === item.href;
-            return (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  aria-current={active ? "page" : undefined}
+        <div className="relative">
+          <div className="grid grid-cols-5">
+            {tabs.map((tab) => {
+              const isActive = tab.id === activeTab;
+              return (
+                <button
+                  key={tab.id}
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => onTabChange(tab.id)}
                   className={`stateful flex min-h-14 flex-col items-center justify-center gap-1 text-xs font-semibold ${
-                    active
+                    isActive
                       ? "text-sky-800 dark:text-sky-300"
                       : "text-zinc-700 dark:text-zinc-300"
                   }`}
                 >
-                  <span aria-hidden className={`h-1 w-8 rounded-sm ${active ? "bg-sky-700 dark:bg-sky-400" : "bg-transparent"}`} />
-                  {item.label}
-                </Link>
-              </li>
+                  <span aria-hidden className="[&>svg]:h-5 [&>svg]:w-5">
+                    {tab.icon}
+                  </span>
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+          {/* Indikator aktif mobile */}
+          {(() => {
+            const idx = tabs.findIndex((t) => t.id === activeTab);
+            const pct = (idx / 5) * 100;
+            return (
+              <div
+                aria-hidden
+                className="absolute top-0 h-0.5 w-1/5 rounded-full bg-sky-700 transition-transform duration-300 ease-out dark:bg-sky-400"
+                style={{ transform: `translateX(${pct * 1}%)` }}
+              />
             );
-          })}
-        </ul>
+          })()}
+        </div>
       </nav>
     </header>
   );

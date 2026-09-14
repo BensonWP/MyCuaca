@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useWeather } from "@/app/weather-provider";
 import SkyHero from "@/components/SkyHero";
 import KeyFacts from "@/components/KeyFacts";
@@ -46,9 +45,12 @@ export default function HomeScreen() {
           <h3 id="kota-cepat" className="text-lg font-bold text-zinc-950 dark:text-white">
             Kota yang sering dibuka
           </h3>
-          <Link href="/kota" className="min-h-11 rounded-lg border border-zinc-300 px-4 py-2 text-sm font-semibold hover:border-sky-700 hover:text-sky-800 dark:border-zinc-700 dark:hover:text-sky-300">
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent("mycuaca:tab", { detail: "kota" }))}
+            className="min-h-11 rounded-lg border border-zinc-300 px-4 py-2 text-sm font-semibold hover:border-sky-700 hover:text-sky-800 dark:border-zinc-700 dark:hover:text-sky-300"
+          >
             Kelola semua kota
-          </Link>
+          </button>
         </div>
         {shortcuts.length === 0 ? (
           <EmptyBlock
@@ -74,17 +76,17 @@ export default function HomeScreen() {
 
       <nav aria-label="Lanjutan" className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         {[
-          { href: "/prakiraan", label: "Lihat prakiraan 5 hari" },
-          { href: "/peta", label: "Buka peta cuaca" },
-          { href: "/udara", label: "Periksa kualitas udara" },
+          { id: "prakiraan", label: "Lihat prakiraan 5 hari" },
+          { id: "peta", label: "Buka peta cuaca" },
+          { id: "udara", label: "Periksa kualitas udara" },
         ].map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="min-h-11 rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm font-bold hover:border-sky-700 hover:text-sky-800 dark:border-zinc-700 dark:bg-zinc-950 dark:hover:text-sky-300"
+          <button
+            key={item.id}
+            onClick={() => window.dispatchEvent(new CustomEvent("mycuaca:tab", { detail: item.id }))}
+            className="min-h-11 rounded-xl border border-zinc-300 bg-white px-4 py-3 text-left text-sm font-bold hover:border-sky-700 hover:text-sky-800 dark:border-zinc-700 dark:bg-zinc-950 dark:hover:text-sky-300"
           >
             {item.label}
-          </Link>
+          </button>
         ))}
       </nav>
     </div>

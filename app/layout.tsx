@@ -3,7 +3,6 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/app/theme-provider";
 import { WeatherProvider } from "@/app/weather-provider";
-import SiteHeader from "@/components/SiteHeader";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -27,22 +26,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <ThemeProvider>
           <WeatherProvider>
-          <SiteHeader />
-          <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-6 sm:px-6 sm:pb-12 sm:pt-8">
             {children}
-          </main>
-          <footer className="border-t border-zinc-200 dark:border-zinc-800">
-            <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-6 pb-24 text-sm sm:flex-nowrap sm:px-6 sm:pb-6">
-              <p className="font-bold text-zinc-950 dark:text-white">MyCuaca</p>
-              <p className="text-zinc-700 dark:text-zinc-300">
-                Data oleh{" "}
-                <a href="https://openweathermap.org/" className="font-semibold underline">
-                  OpenWeather
-                </a>
-              </p>
-            </div>
-          </footer>
-        </WeatherProvider>
+          </WeatherProvider>
         </ThemeProvider>
       </body>
     </html>

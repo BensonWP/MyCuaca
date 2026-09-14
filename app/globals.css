@@ -85,6 +85,24 @@ body {
   }
 }
 
+/* Transisi konten tab: fade + slide ringan */
+@media (prefers-reduced-motion: no-preference) {
+  .tab-content {
+    animation: tabIn 280ms ease-out both;
+  }
+}
+
+@keyframes tabIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
