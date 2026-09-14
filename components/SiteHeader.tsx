@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useWeather } from "@/app/weather-provider";
 import CitySearch from "@/components/CitySearch";
+import ThemeSwitch from "@/components/ThemeSwitch";
 import UnitSwitch from "@/components/UnitSwitch";
 
 const NAV = [
@@ -21,11 +22,14 @@ export default function SiteHeader() {
   return (
     <header className="border-b border-zinc-200 bg-white/95 dark:border-zinc-800 dark:bg-zinc-950/95">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 py-4 sm:px-6">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <Link href="/" className="text-xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
             <span className="text-sky-700 dark:text-sky-300">My</span>Cuaca
           </Link>
-          <UnitSwitch unit={unit} onChange={switchUnit} />
+          <div className="flex flex-wrap items-center gap-2">
+            <ThemeSwitch />
+            <UnitSwitch unit={unit} onChange={switchUnit} />
+          </div>
         </div>
         <CitySearch compact />
         <nav aria-label="Navigasi utama" className="hidden sm:block">

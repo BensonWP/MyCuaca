@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useWeather } from "@/app/weather-provider";
+import { useTheme } from "@/app/theme-provider";
 import type { MapLayer } from "@/components/MapView";
 import { ErrorBlock, Horizon, LoadingBlock, OfflineBanner, RefreshBanner } from "@/components/Status";
 
@@ -13,6 +14,7 @@ const MapView = dynamic(() => import("@/components/MapView"), {
 
 export default function MapScreen() {
   const { city, matchedData, loading, error, offline, updatedAt, refresh } = useWeather();
+  const { resolved } = useTheme();
   const data = matchedData;
   const [layer, setLayer] = useState<MapLayer>("clouds");
 
@@ -38,6 +40,7 @@ export default function MapScreen() {
         cityName={data.current.name}
         layer={layer}
         onLayerChange={setLayer}
+        dark={resolved === "gelap"}
       />
     </div>
   );

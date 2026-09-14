@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
+import { ThemeProvider } from "@/app/theme-provider";
 import { WeatherProvider } from "@/app/weather-provider";
 import SiteHeader from "@/components/SiteHeader";
 
@@ -28,7 +29,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="id" className={`${jakarta.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
-        <WeatherProvider>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var s=localStorage.getItem("mycuaca.theme")||"sistem";var d=s==="sistem"?window.matchMedia("(prefers-color-scheme: dark)").matches:s==="gelap";if(d)document.documentElement.classList.add("dark");}catch(e){}})();`,
+          }}
+        />
+        <ThemeProvider>
+          <WeatherProvider>
           <SiteHeader />
           <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-6 sm:px-6 sm:pb-12 sm:pt-8">
             {children}
@@ -59,6 +66,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </footer>
         </WeatherProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

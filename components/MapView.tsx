@@ -12,6 +12,7 @@ interface Props {
   cityName: string;
   layer: MapLayer;
   onLayerChange: (layer: MapLayer) => void;
+  dark: boolean;
 }
 
 const LAYERS: { value: MapLayer; label: string; legend: string }[] = [
@@ -20,12 +21,13 @@ const LAYERS: { value: MapLayer; label: string; legend: string }[] = [
   { value: "temp", label: "Suhu", legend: "Lapisan suhu menunjukkan sebaran suhu permukaan." },
 ];
 
-export default function MapView({ lat, lon, cityName, layer, onLayerChange }: Props) {
+export default function MapView({ lat, lon, cityName, layer, onLayerChange, dark }: Props) {
   const mapRef = useRef<L.Map | null>(null);
   const markerRef = useRef<L.Marker | null>(null);
   const baseRef = useRef<L.TileLayer | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const layerRef = useRef<MapLayer>(layer);
+  const darkRef = useRef<boolean>(dark);
 
   function baseLayer(dark: boolean): L.TileLayer {
     return dark
@@ -44,8 +46,7 @@ export default function MapView({ lat, lon, cityName, layer, onLayerChange }: Pr
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
     const map = L.map(containerRef.current).setView([lat, lon], 7);
-    const dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    baseRef.current = baseLayer(dark);
+    baseRef.current = baseLayer(darkRef.current);
     baseRef.current.addTo(map);
     L.tileLayer(`/api/tile/${layerRef.current}/{z}/{x}/{y}`, {
       opacity: 0.65,
@@ -55,17 +56,7 @@ export default function MapView({ lat, lon, cityName, layer, onLayerChange }: Pr
     markerRef.current = L.marker([lat, lon]).addTo(map).bindPopup(cityName);
     mapRef.current = map;
     setTimeout(() => map.invalidateSize(), 100);
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const onTheme = (event: MediaQueryListEvent) => {
-      const current = mapRef.current;
-      if (!current || !baseRef.current) return;
-      current.removeLayer(baseRef.current);
-      baseRef.current = baseLayer(event.matches);
-      baseRef.current.addTo(current);
-    };
-    media.addEventListener("change", onTheme);
     return () => {
-      media.removeEventListener("change", onTheme);
       map.remove();
       mapRef.current = null;
       markerRef.current = null;
@@ -73,6 +64,15 @@ export default function MapView({ lat, lon, cityName, layer, onLayerChange }: Pr
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !baseRef.current || dark === darkRef.current) return;
+    darkRef.current = dark;
+    map.removeLayer(baseRef.current);
+    baseRef.current = baseLayer(dark);
+    baseRef.current.addTo(map);
+  }, [dark]);
 
   useEffect(() => {
     const map = mapRef.current;

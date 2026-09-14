@@ -10,6 +10,7 @@ MyCuaca adalah aplikasi cuaca harian berbahasa Indonesia. Kepribadiannya tenang 
 - Aksen tunggal: sky-700 untuk tindakan utama, tautan aktif, dan penanda.
 - Latar hero mengikuti kondisi cuaca dari kode ikon OpenWeather (cerah, malam, berawan, hujan, badai, salju, kabut). Warna hero selalu dipasangkan dengan teks yang lolos kontras AA.
 - Warna semantik (merah, amber, sky) hanya untuk status galat, offline, dan info, selalu disertai teks penjelasan, bukan warna saja.
+- Kontrol tema ada di header dengan tiga pilihan: Terang, Gelap, Sistem. Pilihan tersimpan di perangkat dan tema gelap selalu lengkap, bukan sekadar ikut sistem operasi.
 
 ## Tipografi
 
