@@ -40,11 +40,11 @@ export default function AqiScale({ data }: { data: AirPollution }) {
       </h3>
       <p className="mt-1 text-lg font-bold text-zinc-950 dark:text-white">{active.label}</p>
       <div className="mt-6" role="img" aria-label={`AQI ${entry.main.aqi}, ${active.label}, skala 1 sampai 5`}>
-        <div className="relative h-3 rounded-sm bg-zinc-300 dark:bg-zinc-700">
+        <div className="relative h-5 rounded-sm bg-zinc-300 dark:bg-zinc-700">
           <span
             aria-hidden
             style={{ left: `${marker}%` }}
-            className="absolute top-1/2 h-6 w-1 -translate-x-1/2 -translate-y-1/2 bg-sky-700 dark:bg-sky-400"
+            className="absolute top-1/2 h-9 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-sm bg-sky-700 dark:bg-sky-400"
           />
         </div>
         <div className="mt-2 flex justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300">

@@ -23,10 +23,18 @@ export interface WeatherBundle {
   aqi: AirPollution;
 }
 
+export interface FavoriteWeather {
+  temp: number;
+  icon: string;
+  description: string;
+  at: number;
+}
+
 interface WeatherContextValue {
   city: FavCity | null;
   data: WeatherBundle | null;
   matchedData: WeatherBundle | null;
+  favoriteWeather: Record<string, FavoriteWeather>;
   loading: boolean;
   error: string | null;
   offline: boolean;
@@ -37,6 +45,7 @@ interface WeatherContextValue {
   selectCity: (city: FavCity, record?: boolean) => void;
   refresh: () => void;
   requestMyLocation: () => void;
+  loadFavoriteWeather: (favorites: FavCity[]) => void;
   toggleFavoriteCity: (city: FavCity) => void;
   removeFavorite: (city: FavCity) => void;
   clearSearchHistory: () => void;
@@ -59,6 +68,44 @@ export function WeatherProvider({ children }: { children: React.ReactNode }) {
   const [unit, setUnitState] = useState<Unit>("metric");
   const [favorites, setFavorites] = useState<FavCity[]>([]);
   const [history, setHistory] = useState<FavCity[]>([]);
+  const [favoriteWeather, setFavoriteWeather] = useState<Record<string, FavoriteWeather>>({});
+
+  // Suhu live tiap favorit, di-cache 10 menit. Hanya dipanggil dari halaman Kota.
+  const loadFavoriteWeather = useCallback(async (targets: FavCity[]) => {
+    const now = Date.now();
+    const fresh = targets.filter((target) => {
+      const cached = favoriteWeather[`${target.lat},${target.lon}`];
+      return !cached || now - cached.at > REFRESH_MS;
+    });
+    if (fresh.length === 0) return;
+    const entries = await Promise.all(
+      fresh.map(async (target) => {
+        try {
+          const res = await fetch(`/api/weather?type=current&lat=${target.lat}&lon=${target.lon}`);
+          if (!res.ok) return null;
+          const current = (await res.json()) as CurrentWeather;
+          return [
+            `${target.lat},${target.lon}`,
+            {
+              temp: current.main.temp,
+              icon: current.weather[0].icon,
+              description: current.weather[0].description,
+              at: now,
+            },
+          ] as const;
+        } catch {
+          return null;
+        }
+      })
+    );
+    setFavoriteWeather((prev) => {
+      const next = { ...prev };
+      for (const entry of entries) {
+        if (entry) next[entry[0]] = entry[1];
+      }
+      return next;
+    });
+  }, [favoriteWeather]);
 
   const load = useCallback(async (target: FavCity) => {
     setLoading(true);
@@ -170,6 +217,7 @@ export function WeatherProvider({ children }: { children: React.ReactNode }) {
       city,
       data,
       matchedData,
+      favoriteWeather,
       loading,
       error,
       offline,
@@ -182,6 +230,7 @@ export function WeatherProvider({ children }: { children: React.ReactNode }) {
         if (city) void load(city);
       },
       requestMyLocation,
+      loadFavoriteWeather,
       toggleFavoriteCity: (target) => setFavorites(toggleFavorite(target)),
       removeFavorite: (target) => setFavorites(removeFavoriteStored(target)),
       clearSearchHistory: () => {
@@ -193,7 +242,7 @@ export function WeatherProvider({ children }: { children: React.ReactNode }) {
         saveUnit(next);
       },
     }),
-    [city, data, matchedData, loading, error, offline, updatedAt, unit, favorites, history, selectCity, load, requestMyLocation]
+    [city, data, matchedData, favoriteWeather, loading, error, offline, updatedAt, unit, favorites, history, selectCity, load, requestMyLocation, loadFavoriteWeather]
   );
 
   return <WeatherContext.Provider value={value}>{children}</WeatherContext.Provider>;

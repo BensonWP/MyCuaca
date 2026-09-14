@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { useWeather } from "@/app/weather-provider";
-import DailySelector from "@/components/DailySelector";
+import TempStripes from "@/components/TempStripes";
+import TempCurve from "@/components/TempCurve";
 import HourlyTimeline from "@/components/HourlyTimeline";
 import WarningList from "@/components/WarningList";
 import { ErrorBlock, Horizon, LoadingBlock, OfflineBanner, RefreshBanner } from "@/components/Status";
@@ -42,11 +43,17 @@ export default function ForecastScreen() {
         </h2>
         <Horizon />
         <p className="mt-2 max-w-2xl text-sm text-zinc-700 dark:text-zinc-300">
-          Pilih satu hari untuk melihat rincian tiga jamannya. Data berasal dari prakiraan tiga jam OpenWeather yang dikelompokkan per tanggal.
+          Warna strip menunjukkan suhu maksimum hari itu, dari biru (dingin) ke merah (panas).
+          Pilih satu hari untuk melihat rincian tiga jamannya.
         </p>
       </div>
-      <DailySelector days={days} selectedKey={activeKey} onSelect={setSelectedKey} unit={unit} />
+      <TempStripes days={days} selectedKey={activeKey} onSelect={setSelectedKey} unit={unit} />
       <WarningList warnings={warnings} />
+      <TempCurve
+        items={activeItems}
+        unit={unit}
+        title={activeDay ? `Kurva suhu ${formatDay(activeDay.date)}` : "Kurva suhu"}
+      />
       <HourlyTimeline
         id={`linimasa-${activeKey}`}
         title={activeDay ? `Rincian ${formatDay(activeDay.date)}` : "Rincian hari"}

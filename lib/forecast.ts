@@ -62,6 +62,26 @@ export function formatHour(timestamp: number): string {
   });
 }
 
+// Skala divergen biru-merah untuk pita suhu: dingin = biru, panas = merah.
+// Posisi tiap hari dinormalisasi dari min-maks 5 hari agar selalu terbaca.
+const STRIPE_COLORS = [
+  "#1d4ed8",
+  "#2563eb",
+  "#0284c7",
+  "#0d9488",
+  "#65a30d",
+  "#ca8a04",
+  "#ea580c",
+  "#dc2626",
+  "#b91c1c",
+];
+
+export function tempStripeColor(temp: number, min: number, max: number): string {
+  if (max <= min) return STRIPE_COLORS[4];
+  const t = Math.min(1, Math.max(0, (temp - min) / (max - min)));
+  return STRIPE_COLORS[Math.min(STRIPE_COLORS.length - 1, Math.floor(t * STRIPE_COLORS.length))];
+}
+
 // Ambang peringatan ditulis eksplisit agar tidak menjadi angka misterius di UI.
 export const HEAVY_RAIN_3H_MM = 10;
 export const STRONG_WIND_MS = 10.8;

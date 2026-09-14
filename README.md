@@ -19,6 +19,9 @@ Aplikasi web prakiraan cuaca berbahasa Indonesia, dibangun dengan Next.js, TypeS
 | 11 | Auto-refresh 10 menit | + timestamp "Diperbarui pukul HH:MM" |
 | 12 | Peta cuaca | Leaflet + tile layer awan / curah hujan / suhu |
 | 13 | Tema tampilan | Toggle Terang, Gelap, atau Sistem di header; pilihan tersimpan di perangkat |
+| 14 | Visualisasi hero | Busur matahari, dial kompas angin, dan angka suhu bertransisi |
+| 15 | Pita dan kurva suhu | Strip 5 hari skala divergen + kurva per-3-jam hari terpilih |
+| 16 | Suhu live favorit | Tiap baris favorit di halaman Kota menampilkan suhu dan ikon terkini |
 
 ## Tech Stack
 

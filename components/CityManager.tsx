@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { FavCity } from "@/lib/storage";
+import { FavCity, Unit, formatTemp } from "@/lib/storage";
+import { FavoriteWeather } from "@/app/weather-provider";
 
 interface Props {
   active: FavCity | null;
   favorites: FavCity[];
   history: FavCity[];
+  favoriteWeather: Record<string, FavoriteWeather>;
+  unit: Unit;
   onSelect: (city: FavCity) => void;
   onRemoveFavorite: (city: FavCity) => void;
   onClearHistory: () => void;
@@ -16,11 +19,15 @@ interface Props {
 function CityRow({
   city,
   selected,
+  weather,
+  unit,
   onSelect,
   action,
 }: {
   city: FavCity;
   selected: boolean;
+  weather?: FavoriteWeather;
+  unit?: Unit;
   onSelect: () => void;
   action?: React.ReactNode;
 }) {
@@ -35,12 +42,26 @@ function CityRow({
           {city.lat.toFixed(2)}, {city.lon.toFixed(2)}
         </span>
       </button>
+      {weather && unit && (
+        <span className="flex shrink-0 items-center gap-2" aria-label={`Suhu saat ini ${formatTemp(weather.temp, unit)}`}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`}
+            alt={weather.description}
+            width={40}
+            height={40}
+          />
+          <span className="text-lg font-bold text-zinc-950 dark:text-white">
+            {formatTemp(weather.temp, unit)}
+          </span>
+        </span>
+      )}
       {action}
     </li>
   );
 }
 
-export default function CityManager({ active, favorites, history, onSelect, onRemoveFavorite, onClearHistory, onUseLocation }: Props) {
+export default function CityManager({ active, favorites, history, favoriteWeather, unit, onSelect, onRemoveFavorite, onClearHistory, onUseLocation }: Props) {
   const [confirmClear, setConfirmClear] = useState(false);
 
   return (
@@ -82,6 +103,8 @@ export default function CityManager({ active, favorites, history, onSelect, onRe
                 key={`${city.lat},${city.lon}`}
                 city={city}
                 selected={active?.lat === city.lat && active?.lon === city.lon}
+                weather={favoriteWeather[`${city.lat},${city.lon}`]}
+                unit={unit}
                 onSelect={() => onSelect(city)}
                 action={
                   <button
