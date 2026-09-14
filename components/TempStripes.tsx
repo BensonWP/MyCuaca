@@ -46,9 +46,6 @@ export default function TempStripes({ days, selectedKey, onSelect, unit }: Props
             <span className="mt-2 block text-sm font-bold text-zinc-950 dark:text-white">
               {formatTemp(day.max, unit)}
             </span>
-            <span className="block text-xs text-zinc-700 dark:text-zinc-300">
-              {formatTemp(day.min, unit)}
-            </span>
             <span className="mt-1 block text-xs font-semibold text-sky-800 dark:text-sky-300">
               {Math.round(day.pop * 100)}%
             </span>

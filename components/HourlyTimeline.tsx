@@ -20,7 +20,7 @@ export default function HourlyTimeline({ id, title, items, unit }: Props) {
       </h3>
       <ol className="mt-4 divide-y divide-zinc-300 dark:divide-zinc-700">
         {items.map((item) => (
-          <li key={item.dt} className="flex items-center gap-4 py-3">
+          <li key={item.dt} className="flex items-center gap-3 py-2 sm:gap-4">
             <span className="w-14 shrink-0 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
               {formatHour(item.dt)}
             </span>
@@ -28,8 +28,8 @@ export default function HourlyTimeline({ id, title, items, unit }: Props) {
             <img
               src={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
               alt={item.weather[0].description}
-              width={48}
-              height={48}
+              width={36}
+              height={36}
             />
             <div className="min-w-0 flex-1">
               <p className="text-base font-bold text-zinc-950 dark:text-white">

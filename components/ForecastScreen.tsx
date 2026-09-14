@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useWeather } from "@/app/weather-provider";
 import TempStripes from "@/components/TempStripes";
 import TempCurve from "@/components/TempCurve";
@@ -13,6 +13,16 @@ export default function ForecastScreen() {
   const { city, matchedData, loading, error, offline, updatedAt, unit, refresh } = useWeather();
   const data = matchedData;
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const detailRef = useRef<HTMLDivElement>(null);
+
+  function pickDay(key: string) {
+    setSelectedKey(key);
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Tunggu render detail baru sebelum menggulir.
+    setTimeout(() => {
+      detailRef.current?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+    }, 0);
+  }
 
   const days = useMemo(
     () => (data ? aggregateDaily(data.forecast.list) : []),
@@ -39,16 +49,16 @@ export default function ForecastScreen() {
       <div>
         <p className="text-sm text-zinc-700 dark:text-zinc-300">Prakiraan untuk {data.current.name}</p>
         <h2 className="mt-1 text-3xl font-extrabold tracking-tight text-zinc-950 sm:text-4xl dark:text-white">
-          Lima hari ke depan
+          {days.length > 0 ? `${days.length} hari ke depan` : "Prakiraan"}
         </h2>
         <Horizon />
         <p className="mt-2 max-w-2xl text-sm text-zinc-700 dark:text-zinc-300">
-          Warna strip menunjukkan suhu maksimum hari itu, dari biru (dingin) ke merah (panas).
-          Pilih satu hari untuk melihat rincian tiga jamannya.
+          Strip menunjukkan suhu maksimum, dari biru (dingin) ke merah (panas).
         </p>
       </div>
-      <TempStripes days={days} selectedKey={activeKey} onSelect={setSelectedKey} unit={unit} />
+      <TempStripes days={days} selectedKey={activeKey} onSelect={pickDay} unit={unit} />
       <WarningList warnings={warnings} />
+      <div ref={detailRef} className="flex scroll-mt-24 flex-col gap-6">
       <TempCurve
         items={activeItems}
         unit={unit}
@@ -60,6 +70,7 @@ export default function ForecastScreen() {
         items={activeItems}
         unit={unit}
       />
+      </div>
     </div>
   );
 }

@@ -34,6 +34,9 @@ export default function TempCurve({ items, unit, title }: Props) {
       aria-label={`${title}: suhu terendah ${formatTemp(min, unit)} pukul ${formatHour(items[minIndex].dt)}, tertinggi ${formatTemp(max, unit)} pukul ${formatHour(items[maxIndex].dt)}`}
       className="rounded-2xl bg-surface p-5 sm:p-6"
     >
+      <figcaption className="mb-3 text-lg font-bold text-zinc-950 dark:text-white">
+        {title}
+      </figcaption>
       <svg viewBox={`0 0 ${W} ${H}`} className="h-44 w-full sm:h-52" aria-hidden>
         <polygon points={area} className="fill-sky-200 dark:fill-sky-900" opacity="0.6" />
         <polyline
