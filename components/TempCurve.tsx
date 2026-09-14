@@ -27,17 +27,35 @@ export default function TempCurve({ items, unit, title }: Props) {
   const area = `${PAD},${H - PAD} ${points} ${W - PAD},${H - PAD}`;
   const minIndex = temps.indexOf(min);
   const maxIndex = temps.indexOf(max);
+  const mid = (min + max) / 2;
+  const maxPop = Math.max(...items.map((item) => item.pop));
 
   return (
     <figure
       role="img"
-      aria-label={`${title}: suhu terendah ${formatTemp(min, unit)} pukul ${formatHour(items[minIndex].dt)}, tertinggi ${formatTemp(max, unit)} pukul ${formatHour(items[maxIndex].dt)}`}
+      aria-label={`${title}: suhu terendah ${formatTemp(min, unit)} pukul ${formatHour(items[minIndex].dt)}, tertinggi ${formatTemp(max, unit)} pukul ${formatHour(items[maxIndex].dt)}, peluang hujan tertinggi ${Math.round(maxPop * 100)} persen`}
       className="rounded-2xl bg-surface p-5 sm:p-6"
     >
       <figcaption className="mb-3 text-lg font-bold text-zinc-950 dark:text-white">
         {title}
       </figcaption>
-      <svg viewBox={`0 0 ${W} ${H}`} className="h-44 w-full sm:h-52" aria-hidden>
+      <svg viewBox={`-4 0 ${W + 44} ${H}`} className="h-48 w-full sm:h-56" aria-hidden>
+        {[min, mid, max].map((line) => (
+          <g key={line}>
+            <line
+              x1={PAD}
+              x2={W - PAD}
+              y1={y(line)}
+              y2={y(line)}
+              strokeWidth="1"
+              strokeDasharray="4 4"
+              className="stroke-zinc-300 dark:stroke-zinc-700"
+            />
+            <text x={W - PAD + 4} y={y(line) + 4} fontSize="12" className="fill-zinc-500 dark:fill-zinc-400">
+              {Math.round(line)}°
+            </text>
+          </g>
+        ))}
         <polygon points={area} className="fill-sky-200 dark:fill-sky-900" opacity="0.6" />
         <polyline
           points={points}
@@ -49,21 +67,39 @@ export default function TempCurve({ items, unit, title }: Props) {
         />
         {items.map((item, i) => (
           <g key={item.dt}>
-            <circle cx={x(i)} cy={y(item.main.temp)} r="4" className="fill-sky-700 dark:fill-sky-400" />
-            {(i % 2 === 0 || i === items.length - 1) && (
-              <text x={x(i)} y={H - 6} textAnchor="middle" fontSize="13" className="fill-zinc-600 dark:fill-zinc-400">
-                {formatHour(item.dt)}
-              </text>
+            {item.pop > 0.05 && (
+              <rect
+                x={x(i) - 5}
+                y={H - PAD - Math.max(3, item.pop * 34)}
+                width={10}
+                height={Math.max(3, item.pop * 34)}
+                rx={2}
+                className="fill-sky-500 dark:fill-sky-400"
+                opacity={0.35 + item.pop * 0.55}
+              />
             )}
+            <circle
+              cx={x(i)}
+              cy={y(item.main.temp)}
+              r={i === minIndex || i === maxIndex ? 6 : 3.5}
+              className="fill-sky-700 stroke-white dark:fill-sky-400 dark:stroke-zinc-950"
+              strokeWidth={i === minIndex || i === maxIndex ? 2 : 0}
+            />
+            <text x={x(i)} y={H - 6} textAnchor="middle" fontSize="12" className="fill-zinc-600 dark:fill-zinc-400">
+              {formatHour(item.dt)}
+            </text>
           </g>
         ))}
-        <text x={W - PAD} y={y(max) - 8} textAnchor="end" fontSize="14" fontWeight="bold" className="fill-zinc-900 dark:fill-white">
+        <text x={W - PAD} y={y(max) - 10} textAnchor="end" fontSize="14" fontWeight="bold" className="fill-zinc-900 dark:fill-white">
           {formatTemp(max, unit)}
         </text>
-        <text x={W - PAD} y={y(min) + 18} textAnchor="end" fontSize="14" fontWeight="bold" className="fill-zinc-900 dark:fill-white">
+        <text x={W - PAD} y={y(min) + 20} textAnchor="end" fontSize="14" fontWeight="bold" className="fill-zinc-900 dark:fill-white">
           {formatTemp(min, unit)}
         </text>
       </svg>
+      <p className="mt-2 text-xs text-zinc-600 dark:text-zinc-400">
+        Batang biru di bawah menunjukkan peluang hujan per 3 jam.
+      </p>
     </figure>
   );
 }
