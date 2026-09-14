@@ -2,7 +2,7 @@
 
 import type { DailyCard } from "@/lib/forecast";
 import { Unit, formatTemp } from "@/lib/storage";
-import { formatDay, stripeLegend, tempStripeColor } from "@/lib/forecast";
+import { formatDay, tempStripeColor } from "@/lib/forecast";
 
 interface Props {
   days: DailyCard[];
@@ -11,14 +11,8 @@ interface Props {
   unit: Unit;
 }
 
-// Pita suhu ala warming stripes pada skala absolut: dingin = biru, panas = merah.
-// Strip adalah lapisan sekilas; angka maks dan hujan di bawahnya membawa informasi
-// yang sama untuk pengguna yang tidak membedakan warna.
 export default function TempStripes({ days, selectedKey, onSelect, unit }: Props) {
-  const legend = stripeLegend();
-
   return (
-    <>
     <div role="group" aria-label="Pilih hari prakiraan" className="grid grid-cols-5 gap-2 sm:gap-3">
       {days.map((day) => {
         const active = day.key === selectedKey;
@@ -52,15 +46,5 @@ export default function TempStripes({ days, selectedKey, onSelect, unit }: Props
         );
       })}
     </div>
-    <div className="mt-3 flex items-center gap-3" aria-hidden>
-      <span
-        className="h-2 flex-1 rounded-sm"
-        style={{ background: `linear-gradient(90deg, ${legend.colors.join(", ")})` }}
-      />
-    </div>
-    <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
-      Skala suhu strip: {legend.cold} sampai {legend.hot}.
-    </p>
-    </>
   );
 }
