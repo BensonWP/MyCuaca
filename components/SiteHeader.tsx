@@ -20,7 +20,7 @@ export default function SiteHeader() {
   const { unit, switchUnit } = useWeather();
 
   return (
-    <header className="border-b border-zinc-200 bg-white/95 dark:border-zinc-800 dark:bg-zinc-950/95">
+    <header className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 py-4 sm:px-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Link href="/" className="text-xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
@@ -41,7 +41,7 @@ export default function SiteHeader() {
                   <Link
                     href={item.href}
                     aria-current={active ? "page" : undefined}
-                    className={`inline-flex min-h-11 items-center rounded-lg border px-4 py-2 text-sm font-semibold ${
+                    className={`stateful inline-flex min-h-11 items-center rounded-lg border px-4 py-2 text-sm font-semibold ${
                       active
                         ? "border-sky-700 bg-sky-700 text-white dark:border-sky-500 dark:bg-sky-600"
                         : "border-zinc-300 text-zinc-800 hover:border-sky-700 hover:text-sky-800 dark:border-zinc-700 dark:text-zinc-200 dark:hover:text-sky-300"
@@ -57,9 +57,9 @@ export default function SiteHeader() {
       </div>
       <nav
         aria-label="Navigasi seluler"
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-zinc-200 bg-white/98 pb-[env(safe-area-inset-bottom)] sm:hidden dark:border-zinc-800 dark:bg-zinc-950/98"
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-zinc-200 bg-white pb-[env(safe-area-inset-bottom)] sm:hidden dark:border-zinc-800 dark:bg-zinc-950"
       >
-        <ul className="grid grid-cols-5 border-t border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
+        <ul className="grid grid-cols-5">
           {NAV.map((item) => {
             const active = pathname === item.href;
             return (
@@ -67,7 +67,7 @@ export default function SiteHeader() {
                 <Link
                   href={item.href}
                   aria-current={active ? "page" : undefined}
-                  className={`flex min-h-14 flex-col items-center justify-center gap-1 text-xs font-semibold ${
+                  className={`stateful flex min-h-14 flex-col items-center justify-center gap-1 text-xs font-semibold ${
                     active
                       ? "text-sky-800 dark:text-sky-300"
                       : "text-zinc-700 dark:text-zinc-300"

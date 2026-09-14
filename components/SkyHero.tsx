@@ -2,6 +2,7 @@
 
 import type { CurrentWeather } from "@/lib/openweather";
 import { Unit, formatSpeed, formatTemp } from "@/lib/storage";
+import { clock } from "@/lib/format";
 import { skyTheme } from "@/lib/sky";
 
 interface Props {
@@ -11,13 +12,6 @@ interface Props {
   onToggleFavorite: () => void;
   updatedAt: Date | null;
   onRefresh: () => void;
-}
-
-function clock(timestamp: number): string {
-  return new Date(timestamp * 1000).toLocaleTimeString("id-ID", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 }
 
 export default function SkyHero({ current, unit, isFavorite, onToggleFavorite, updatedAt, onRefresh }: Props) {
@@ -41,7 +35,7 @@ export default function SkyHero({ current, unit, isFavorite, onToggleFavorite, u
             <button
               onClick={onToggleFavorite}
               aria-pressed={isFavorite}
-              className={`min-h-11 rounded-lg border px-4 py-2 text-sm font-semibold ${
+              className={`stateful min-h-11 rounded-lg border px-4 py-2 text-sm font-semibold ${
                 isFavorite
                   ? "border-white bg-white text-sky-900"
                   : "border-white/70 text-white hover:bg-white/15"
@@ -51,7 +45,7 @@ export default function SkyHero({ current, unit, isFavorite, onToggleFavorite, u
             </button>
             <button
               onClick={onRefresh}
-              className="min-h-11 rounded-lg border border-white/70 px-4 py-2 text-sm font-semibold text-white hover:bg-white/15"
+              className="stateful min-h-11 rounded-lg border border-white/70 px-4 py-2 text-sm font-semibold text-white hover:bg-white/15"
             >
               Muat ulang
             </button>

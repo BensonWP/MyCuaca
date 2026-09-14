@@ -41,7 +41,7 @@ export default function HomeScreen() {
       <KeyFacts current={data.current} unit={unit} />
       <HourlyTimeline id="cuaca-beberapa-jam" title="Beberapa jam ke depan" items={preview} unit={unit} />
 
-      <section aria-labelledby="kota-cepat" className="rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6 dark:border-zinc-800 dark:bg-zinc-950">
+      <section aria-labelledby="kota-cepat" className="rounded-2xl bg-surface p-5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 id="kota-cepat" className="text-lg font-bold text-zinc-950 dark:text-white">
             Kota yang sering dibuka
@@ -58,11 +58,11 @@ export default function HomeScreen() {
         ) : (
           <ul className="mt-2">
             {shortcuts.map((item) => (
-              <li key={`${item.lat},${item.lon}`} className="flex items-center justify-between gap-3 border-b border-zinc-200 py-3 last:border-b-0 dark:border-zinc-800">
+              <li key={`${item.lat},${item.lon}`} className="flex items-center justify-between gap-3 border-b border-zinc-300 py-3 last:border-b-0 dark:border-zinc-700">
                 <span className="text-base font-bold text-zinc-950 dark:text-white">{item.name}</span>
                 <button
                   onClick={() => selectCity(item)}
-                  className="min-h-11 rounded-lg bg-sky-700 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-800"
+                  className="stateful min-h-11 rounded-lg bg-sky-700 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-800"
                 >
                   Buka
                 </button>

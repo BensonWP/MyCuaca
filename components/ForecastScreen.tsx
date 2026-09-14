@@ -6,7 +6,7 @@ import DailySelector from "@/components/DailySelector";
 import HourlyTimeline from "@/components/HourlyTimeline";
 import WarningList from "@/components/WarningList";
 import { ErrorBlock, Horizon, LoadingBlock, OfflineBanner, RefreshBanner } from "@/components/Status";
-import { aggregateDaily, groupByDay, warningsForDay } from "@/lib/forecast";
+import { aggregateDaily, formatDay, groupByDay, warningsForDay } from "@/lib/forecast";
 
 export default function ForecastScreen() {
   const { city, matchedData, loading, error, offline, updatedAt, unit, refresh } = useWeather();
@@ -49,7 +49,7 @@ export default function ForecastScreen() {
       <WarningList warnings={warnings} />
       <HourlyTimeline
         id={`linimasa-${activeKey}`}
-        title={activeDay ? `Rincian ${activeDay.date.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long" })}` : "Rincian hari"}
+        title={activeDay ? `Rincian ${formatDay(activeDay.date)}` : "Rincian hari"}
         items={activeItems}
         unit={unit}
       />

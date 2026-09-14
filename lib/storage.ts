@@ -34,10 +34,6 @@ export function removeFavorite(city: FavCity): FavCity[] {
   return next;
 }
 
-export function isFavorite(favs: FavCity[], city: FavCity): boolean {
-  return favs.some((f) => f.lat === city.lat && f.lon === city.lon);
-}
-
 export function getHistory(): FavCity[] {
   if (typeof window === "undefined") return [];
   try {

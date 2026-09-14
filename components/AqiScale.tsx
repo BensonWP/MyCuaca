@@ -33,14 +33,14 @@ export default function AqiScale({ data }: { data: AirPollution }) {
     .slice(0, 5);
 
   return (
-    <section aria-labelledby="skala-aqi" className="rounded-2xl border border-zinc-200 bg-white p-5 sm:p-8 dark:border-zinc-800 dark:bg-zinc-950">
+    <section aria-labelledby="skala-aqi" className="rounded-2xl bg-surface p-5 sm:p-8">
       <p className="text-sm text-zinc-700 dark:text-zinc-300">Indeks kualitas udara OpenWeather</p>
-      <h3 id="skala-aqi" className="mt-1 text-5xl font-extrabold tracking-tight text-zinc-950 sm:text-6xl dark:text-white">
+      <h3 id="skala-aqi" className="mt-1 text-7xl font-extrabold tracking-tight text-zinc-950 sm:text-8xl dark:text-white">
         {entry.main.aqi}
       </h3>
       <p className="mt-1 text-lg font-bold text-zinc-950 dark:text-white">{active.label}</p>
       <div className="mt-6" role="img" aria-label={`AQI ${entry.main.aqi}, ${active.label}, skala 1 sampai 5`}>
-        <div className="relative h-3 rounded-sm bg-zinc-200 dark:bg-zinc-800">
+        <div className="relative h-3 rounded-sm bg-zinc-300 dark:bg-zinc-700">
           <span
             aria-hidden
             style={{ left: `${marker}%` }}
@@ -58,7 +58,7 @@ export default function AqiScale({ data }: { data: AirPollution }) {
       </div>
       <dl className="mt-6 grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2">
         {rows.map(([key, value]) => (
-          <div key={key} className="flex items-baseline justify-between border-b border-zinc-200 pb-2 dark:border-zinc-800">
+          <div key={key} className="flex items-baseline justify-between border-b border-zinc-300 pb-2 dark:border-zinc-700">
             <dt className="text-sm text-zinc-700 dark:text-zinc-300">{COMPONENTS[key]}</dt>
             <dd className="text-base font-bold text-zinc-950 dark:text-white">
               {value.toFixed(1)} mikrogram per meter kubik

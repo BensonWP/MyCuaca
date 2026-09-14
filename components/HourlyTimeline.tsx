@@ -14,11 +14,11 @@ interface Props {
 export default function HourlyTimeline({ id, title, items, unit }: Props) {
   if (items.length === 0) return null;
   return (
-    <section aria-labelledby={id} className="rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6 dark:border-zinc-800 dark:bg-zinc-950">
+    <section aria-labelledby={id} className="rounded-2xl bg-surface p-5 sm:p-6">
       <h3 id={id} className="text-lg font-bold text-zinc-950 dark:text-white">
         {title}
       </h3>
-      <ol className="mt-4 divide-y divide-zinc-200 dark:divide-zinc-800">
+      <ol className="mt-4 divide-y divide-zinc-300 dark:divide-zinc-700">
         {items.map((item) => (
           <li key={item.dt} className="flex items-center gap-4 py-3">
             <span className="w-14 shrink-0 text-sm font-semibold text-zinc-800 dark:text-zinc-200">

@@ -25,8 +25,8 @@ function CityRow({
   action?: React.ReactNode;
 }) {
   return (
-    <li className="flex items-center justify-between gap-3 border-b border-zinc-200 py-3 last:border-b-0 dark:border-zinc-800">
-      <button onClick={onSelect} className="min-h-11 flex-1 text-left" aria-current={selected ? "true" : undefined}>
+    <li className="flex items-center justify-between gap-3 border-b border-zinc-300 py-3 last:border-b-0 dark:border-zinc-700">
+      <button onClick={onSelect} className="stateful min-h-11 flex-1 rounded-lg text-left" aria-current={selected ? "true" : undefined}>
         <span className={`block text-base font-bold ${selected ? "text-sky-800 dark:text-sky-300" : "text-zinc-950 dark:text-white"}`}>
           {city.name}
           {selected ? " (aktif)" : ""}
@@ -45,29 +45,29 @@ export default function CityManager({ active, favorites, history, onSelect, onRe
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <section aria-labelledby="kota-aktif" className="rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6 dark:border-zinc-800 dark:bg-zinc-950">
-        <h3 id="kota-aktif" className="text-lg font-bold text-zinc-950 dark:text-white">
+      <section aria-labelledby="kota-aktif" className="rounded-2xl bg-sky-700 p-6 text-white sm:p-8">
+        <h3 id="kota-aktif" className="text-sm font-semibold text-sky-100">
           Kota aktif
         </h3>
         {active ? (
-          <div className="mt-3">
-            <p className="text-2xl font-extrabold text-zinc-950 dark:text-white">{active.name}</p>
-            <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">
+          <div className="mt-2">
+            <p className="text-4xl font-extrabold tracking-tight">{active.name}</p>
+            <p className="mt-2 text-sm text-sky-100">
               {active.lat.toFixed(4)}, {active.lon.toFixed(4)}
             </p>
             <button
               onClick={onUseLocation}
-              className="mt-4 min-h-11 rounded-lg border border-zinc-400 px-4 py-2 text-sm font-semibold text-zinc-900 hover:border-sky-700 hover:text-sky-800 dark:border-zinc-600 dark:text-zinc-100 dark:hover:text-sky-300"
+              className="stateful mt-5 min-h-11 rounded-lg border border-white px-4 py-2 text-sm font-semibold text-white hover:bg-white hover:text-sky-900"
             >
               Gunakan lokasi saya
             </button>
           </div>
         ) : (
-          <p className="mt-3 text-sm text-zinc-700 dark:text-zinc-300">Belum ada kota aktif.</p>
+          <p className="mt-3 text-sm text-sky-100">Belum ada kota aktif. Cari kota melalui kolom pencarian di bagian atas.</p>
         )}
       </section>
 
-      <section aria-labelledby="kota-favorit" className="rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6 dark:border-zinc-800 dark:bg-zinc-950">
+      <section aria-labelledby="kota-favorit" className="rounded-2xl bg-surface p-5 sm:p-6">
         <h3 id="kota-favorit" className="text-lg font-bold text-zinc-950 dark:text-white">
           Kota favorit
         </h3>
@@ -97,7 +97,7 @@ export default function CityManager({ active, favorites, history, onSelect, onRe
         )}
       </section>
 
-      <section aria-labelledby="riwayat-kota" className="rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6 lg:col-span-2 dark:border-zinc-800 dark:bg-zinc-950">
+      <section aria-labelledby="riwayat-kota" className="rounded-2xl bg-surface p-5 sm:p-6 lg:col-span-2">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 id="riwayat-kota" className="text-lg font-bold text-zinc-950 dark:text-white">
             Riwayat pencarian

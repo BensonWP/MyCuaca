@@ -21,7 +21,7 @@ export default function DailySelector({ days, selectedKey, onSelect, unit }: Pro
             key={day.key}
             onClick={() => onSelect(day.key)}
             aria-pressed={active}
-            className={`min-h-11 rounded-xl border p-4 text-left ${
+            className={`stateful min-h-11 rounded-xl border p-4 text-left ${
               active
                 ? "border-sky-700 bg-sky-50 dark:border-sky-500 dark:bg-sky-950"
                 : "border-zinc-300 bg-white hover:border-sky-700 dark:border-zinc-700 dark:bg-zinc-950"

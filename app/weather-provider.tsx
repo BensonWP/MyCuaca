@@ -11,7 +11,7 @@ import {
   getSelected,
   getUnit,
   pushHistory,
-  removeFavorite,
+  removeFavorite as removeFavoriteStored,
   setSelected,
   setUnit as saveUnit,
   toggleFavorite,
@@ -183,7 +183,7 @@ export function WeatherProvider({ children }: { children: React.ReactNode }) {
       },
       requestMyLocation,
       toggleFavoriteCity: (target) => setFavorites(toggleFavorite(target)),
-      removeFavorite: (target) => setFavorites(removeFavorite(target)),
+      removeFavorite: (target) => setFavorites(removeFavoriteStored(target)),
       clearSearchHistory: () => {
         clearHistory();
         setHistory([]);

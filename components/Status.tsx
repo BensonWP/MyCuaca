@@ -36,9 +36,9 @@ export function ErrorBlock({ message, onRetry }: { message: string; onRetry?: ()
 
 export function EmptyBlock({ title, message, action }: { title: string; message: string; action?: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-zinc-300 bg-white p-5 text-sm dark:border-zinc-700 dark:bg-zinc-900">
-      <p className="font-semibold text-zinc-900 dark:text-zinc-100">{title}</p>
-      <p className="mt-1 text-zinc-700 dark:text-zinc-300">{message}</p>
+    <div className="py-2">
+      <p className="font-semibold text-zinc-950 dark:text-zinc-100">{title}</p>
+      <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">{message}</p>
       {action && <div className="mt-3">{action}</div>}
     </div>
   );

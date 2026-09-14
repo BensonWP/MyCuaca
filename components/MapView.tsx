@@ -104,7 +104,7 @@ export default function MapView({ lat, lon, cityName, layer, onLayerChange, dark
   const legend = LAYERS.find((item) => item.value === layer)?.legend ?? "";
 
   return (
-    <section aria-labelledby="peta-cuaca" className="overflow-hidden rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
+    <section aria-labelledby="peta-cuaca" className="overflow-hidden rounded-2xl bg-surface">
       <div className="flex flex-col gap-4 p-5 sm:p-6">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
@@ -124,7 +124,7 @@ export default function MapView({ lat, lon, cityName, layer, onLayerChange, dark
                     type="button"
                     onClick={() => onLayerChange(item.value)}
                     aria-pressed={active}
-                    className={`min-h-11 px-4 py-2 text-sm font-semibold ${
+                    className={`stateful min-h-11 px-4 py-2 text-sm font-semibold ${
                       active
                         ? "bg-sky-700 text-white dark:bg-sky-600"
                         : "bg-white text-zinc-800 hover:bg-zinc-100 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-zinc-900"
@@ -144,7 +144,7 @@ export default function MapView({ lat, lon, cityName, layer, onLayerChange, dark
         aria-label={`Peta cuaca interaktif untuk ${cityName}`}
         className="h-[62dvh] min-h-96 w-full"
       />
-      <p className="border-t border-zinc-200 p-4 text-xs text-zinc-700 dark:border-zinc-800 dark:text-zinc-300">
+      <p className="border-t border-zinc-300 p-4 text-xs text-zinc-700 dark:border-zinc-700 dark:text-zinc-300">
         Peta dasar OpenStreetMap. Lapisan cuaca OpenWeather dimuat melalui proxy MyCuaca agar API key tidak terbuka di browser.
       </p>
     </section>

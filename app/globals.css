@@ -5,27 +5,30 @@
 :root {
   --background: #ffffff;
   --foreground: #18181b;
+  --surface: #fafafa;
 }
 
 :root.dark {
   --background: #09090b;
   --foreground: #fafafa;
+  --surface: #18181b;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
 }
 
+/* Fallback tanpa JavaScript. Dengan JavaScript, class .dark yang menang karena selektor :root.dark lebih spesifik. */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #09090b;
     --foreground: #fafafa;
+    --surface: #18181b;
   }
 }
-
-/* Fallback tanpa JavaScript. Dengan JavaScript, class .dark yang menang karena selektor :root.dark lebih spesifik. */
 
 body {
   background: var(--background);
@@ -50,4 +53,18 @@ body {
 
 .leaflet-container {
   font: inherit;
+}
+
+/* Transisi 150ms khusus perubahan warna state terpilih. */
+.stateful {
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

@@ -24,7 +24,7 @@ export default function ThemeSwitch() {
             key={option.value}
             onClick={() => setSetting(option.value)}
             aria-pressed={active}
-            className={`min-h-11 px-2 py-2 text-xs font-semibold sm:px-3 sm:text-sm ${
+            className={`stateful min-h-11 px-2 py-2 text-xs font-semibold sm:px-3 sm:text-sm ${
               active
                 ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950"
                 : "bg-white text-zinc-800 hover:bg-zinc-100 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-zinc-900"

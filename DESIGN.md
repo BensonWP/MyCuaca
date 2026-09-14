@@ -6,9 +6,9 @@ MyCuaca adalah aplikasi cuaca harian berbahasa Indonesia. Kepribadiannya tenang 
 
 ## Palet
 
-- Netral: zinc dan putih/hitam untuk permukaan, teks, dan garis.
+- Netral: dua lapis permukaan. Halaman `--background` (putih/zinc-950), kartu `--surface` (zinc-50/zinc-900). Hierarki dibangun lewat latar, bukan border; border hanya untuk kontrol interaktif, popover, dan alert status.
 - Aksen tunggal: sky-700 untuk tindakan utama, tautan aktif, dan penanda.
-- Latar hero mengikuti kondisi cuaca dari kode ikon OpenWeather (cerah, malam, berawan, hujan, badai, salju, kabut). Warna hero selalu dipasangkan dengan teks yang lolos kontras AA.
+- Latar hero mengikuti kondisi cuaca dari kode ikon OpenWeather (cerah, malam, berawan, hujan, badai, salju, kabut). Warna teks hero solid (bukan transparan) dan tiap pasangan sudah diverifikasi lolos kontras AA.
 - Warna semantik (merah, amber, sky) hanya untuk status galat, offline, dan info, selalu disertai teks penjelasan, bukan warna saja.
 - Kontrol tema ada di header dengan tiga pilihan: Terang, Gelap, Sistem. Pilihan tersimpan di perangkat dan tema gelap selalu lengkap, bukan sekadar ikut sistem operasi.
 
@@ -29,4 +29,4 @@ Satu garis horizon tipis dipakai ulang sebagai pemisah bab: di bawah hero ringka
 
 ## Dial
 
-ENERGY 2 / RHYTHM 3 / MOTION 1. Halaman ringkasan boleh ekspresif lewat suhu besar dan latar cuaca, ritme tiap halaman berbeda sesuai kebutuhan datanya, dan gerakan hanya untuk perubahan status (mode peta, hari terpilih, status muat).
+ENERGY 2 / RHYTHM 3 / MOTION 1. Halaman ringkasan boleh ekspresif lewat suhu besar dan latar cuaca, ritme tiap halaman berbeda sesuai kebutuhan datanya. Gerakan hanya untuk perubahan status: transisi warna 150ms (kelas `stateful`), dimatikan saat `prefers-reduced-motion`.

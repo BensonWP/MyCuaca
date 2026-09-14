@@ -6,7 +6,7 @@ Aplikasi web prakiraan cuaca berbahasa Indonesia, dibangun dengan Next.js, TypeS
 
 | # | Fitur | Keterangan |
 |---|-------|-----------|
-| 1 | Cuaca saat ini | Suhu, deskripsi, ikon, kelembapan, angin + arah, tekanan, jarak pandang, sunrise/sunset, suhu terasa seperti |
+| 1 | Cuaca saat ini | Suhu, deskripsi, ikon, kelembapan, angin + arah mata angin, tekanan, jarak pandang, sunrise/sunset, suhu terasa seperti |
 | 2 | Prakiraan 5 hari | Suhu min–max, ikon, deskripsi, peluang hujan per hari |
 | 3 | Geolocation otomatis | Minta izin lokasi saat halaman dibuka; fallback ke Jakarta bila ditolak |
 | 4 | Kota favorit | Simpan/hapus kota sebagai daftar (localStorage, maks 8) |
@@ -18,7 +18,7 @@ Aplikasi web prakiraan cuaca berbahasa Indonesia, dibangun dengan Next.js, TypeS
 | 10 | Toggle °C/°F | Preferensi satuan tersimpan di localStorage |
 | 11 | Auto-refresh 10 menit | + timestamp "Diperbarui pukul HH:MM" |
 | 12 | Peta cuaca | Leaflet + tile layer awan / curah hujan / suhu |
-| 13 | Dark mode | Otomatis mengikuti `prefers-color-scheme` |
+| 13 | Tema tampilan | Toggle Terang, Gelap, atau Sistem di header; pilihan tersimpan di perangkat |
 
 ## Tech Stack
 
