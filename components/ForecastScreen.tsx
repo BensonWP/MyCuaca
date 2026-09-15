@@ -6,21 +6,18 @@ import TempStripes from "@/components/TempStripes";
 import TempCurve from "@/components/TempCurve";
 import HourlyTimeline from "@/components/HourlyTimeline";
 import WarningList from "@/components/WarningList";
-import { ErrorBlock, Horizon, LoadingBlock, OfflineBanner, RefreshBanner } from "@/components/Status";
+import SectionIntro from "@/components/SectionIntro";
 import { aggregateDaily, formatDay, groupByDay, warningsForDay } from "@/lib/forecast";
 
 export default function ForecastScreen() {
-  const { city, matchedData, loading, error, offline, updatedAt, unit, refresh } = useWeather();
+  const { city, matchedData, unit } = useWeather();
   const data = matchedData;
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const detailRef = useRef<HTMLDivElement>(null);
 
   function pickDay(key: string) {
     setSelectedKey(key);
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    setTimeout(() => {
-      detailRef.current?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
-    }, 0);
+    detailRef.current?.scrollIntoView({ block: "start" });
   }
 
   const days = useMemo(
@@ -28,10 +25,7 @@ export default function ForecastScreen() {
     [data]
   );
 
-  if (loading && !data) return <LoadingBlock label="Memuat prakiraan" />;
-  if ((error && !data) || !data || !city) {
-    return <ErrorBlock message={error ?? "Prakiraan belum tersedia."} onRetry={refresh} />;
-  }
+  if (!data || !city) return null;
 
   const activeKey =
     selectedKey && days.some((day) => day.key === selectedKey)
@@ -43,19 +37,11 @@ export default function ForecastScreen() {
 
   return (
     <div className="flex flex-col gap-5">
-      {offline && <OfflineBanner updatedAt={updatedAt} />}
-      {error && !loading && !offline && <RefreshBanner message={error} onRetry={refresh} />}
-
-      <div>
-        <p className="text-sm text-zinc-700 dark:text-zinc-300">Prakiraan untuk {data.current.name}</p>
-        <h2 className="mt-1 text-3xl font-extrabold tracking-tight text-zinc-950 sm:text-4xl dark:text-white">
-          {days.length > 0 ? `${days.length} hari ke depan` : "Prakiraan"}
-        </h2>
-        <Horizon />
-        <p className="mt-2 text-sm text-zinc-700 dark:text-zinc-300">
-          Pilih satu hari untuk melihat rincian cuacanya.
-        </p>
-      </div>
+      <SectionIntro
+        eyebrow={`Prakiraan untuk ${data.current.name}`}
+        title={days.length > 0 ? `${days.length} hari ke depan` : "Prakiraan"}
+        description="Pilih satu hari untuk melihat rincian cuacanya."
+      />
 
       <TempStripes days={days} selectedKey={activeKey} onSelect={pickDay} unit={unit} />
       <WarningList warnings={warnings} />

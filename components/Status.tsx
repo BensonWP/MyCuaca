@@ -7,9 +7,14 @@ export function Horizon() {
 export function LoadingBlock({ label }: { label: string }) {
   return (
     <div className="flex flex-col gap-4" role="status" aria-live="polite" aria-label={label}>
-      <div className="h-56 animate-pulse rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
-      <div className="h-28 animate-pulse rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
-      <div className="h-40 animate-pulse rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
+      <div className="shimmer h-56 rounded-2xl" />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="shimmer h-20 rounded-2xl" />
+        <div className="shimmer h-20 rounded-2xl" />
+        <div className="shimmer h-20 rounded-2xl" />
+        <div className="shimmer h-20 rounded-2xl" />
+      </div>
+      <div className="shimmer h-40 rounded-2xl" />
     </div>
   );
 }

@@ -11,31 +11,6 @@ interface Props {
   unit: Unit;
 }
 
-interface TimeGroup {
-  label: string;
-  items: ForecastItem[];
-}
-
-function groupByTime(items: ForecastItem[]): TimeGroup[] {
-  const groups: { label: string; from: number; to: number }[] = [
-    { label: "Malam", from: 21, to: 3 },
-    { label: "Pagi", from: 3, to: 9 },
-    { label: "Siang", from: 9, to: 15 },
-    { label: "Sore", from: 15, to: 21 },
-  ];
-
-  const result: TimeGroup[] = [];
-  for (const g of groups) {
-    const matched = items.filter((item) => {
-      const h = new Date(item.dt * 1000).getHours();
-      if (g.from < g.to) return h >= g.from && h < g.to;
-      return h >= g.from || h < g.to;
-    });
-    if (matched.length > 0) result.push({ label: g.label, items: matched });
-  }
-  return result;
-}
-
 function findNearestIndex(items: ForecastItem[]): number {
   const now = Date.now() / 1000;
   let best = 0;
@@ -49,69 +24,90 @@ function findNearestIndex(items: ForecastItem[]): number {
 
 export default function HourlyTimeline({ id, title, items, unit }: Props) {
   if (items.length === 0) return null;
-  const groups = groupByTime(items);
   const nearestIdx = findNearestIndex(items);
-  let globalIdx = -1;
+  const temps = items.map((i) => i.main.temp);
+  const min = Math.min(...temps);
+  const max = Math.max(...temps);
+  const span = max - min || 1;
 
   return (
     <section aria-labelledby={id} className="rounded-2xl bg-surface p-5 sm:p-6">
-      <h3 id={id} className="text-lg font-bold text-zinc-950 dark:text-white">
-        {title}
-      </h3>
-      <div className="mt-4 flex flex-col gap-4">
-        {groups.map((group) => (
-          <div key={group.label}>
-            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-              {group.label}
-            </p>
-            <ol className="flex flex-col gap-1">
-              {group.items.map((item) => {
-                globalIdx++;
-                const isNow = globalIdx === nearestIdx;
-                return (
-                  <li
-                    key={item.dt}
-                    className={`flex items-center gap-3 rounded-lg px-3 py-2 sm:gap-4 ${
-                      isNow
-                        ? "bg-sky-50 ring-1 ring-sky-200 dark:bg-sky-950 dark:ring-sky-800"
-                        : ""
-                    }`}
-                  >
-                    <span className="w-14 shrink-0 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
-                      {formatHour(item.dt)}
-                    </span>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
-                      alt=""
-                      width={32}
-                      height={32}
-                    />
-                    <div className="min-w-0 flex-1">
-                      <span className="text-base font-bold text-zinc-950 dark:text-white">
-                        {formatTemp(item.main.temp, unit)}
-                      </span>
-                      <span className="ml-2 text-sm capitalize text-zinc-700 dark:text-zinc-300">
-                        {item.weather[0].description}
-                      </span>
-                    </div>
-                    {item.pop > 0.05 && (
-                      <span className="shrink-0 text-xs font-semibold text-sky-700 dark:text-sky-300">
-                        {Math.round(item.pop * 100)}%
-                      </span>
-                    )}
-                    {isNow && (
-                      <span className="shrink-0 rounded-full bg-sky-700 px-2 py-0.5 text-xs font-bold text-white dark:bg-sky-500">
-                        Sekarang
-                      </span>
-                    )}
-                  </li>
-                );
-              })}
-            </ol>
-          </div>
-        ))}
+      <div className="flex flex-wrap items-end justify-between gap-2">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-wider text-sky-700 dark:text-sky-300">
+            Jam per jam
+          </p>
+          <h3 id={id} className="mt-1 text-lg font-extrabold text-zinc-950 sm:text-xl dark:text-white">
+            {title}
+          </h3>
+        </div>
+        <p className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">Geser →</p>
       </div>
+      <ol className="no-scrollbar -mx-1 mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-1">
+        {items.map((item, idx) => {
+          const isNow = idx === nearestIdx;
+          const heat = (item.main.temp - min) / span;
+          return (
+            <li
+              key={item.dt}
+              className={`stateful flex min-w-[104px] snap-center flex-col items-center gap-1 rounded-2xl border p-3 text-center transition-transform hover:-translate-y-1 ${
+                isNow
+                  ? "border-sky-500 bg-gradient-to-b from-sky-600 to-blue-700 text-white shadow-md"
+                  : "border-zinc-200 bg-white shadow-sm hover:shadow-md dark:border-zinc-700 dark:bg-zinc-900"
+              }`}
+            >
+              <span
+                className={`text-xs font-bold ${isNow ? "text-sky-100" : "text-zinc-500 dark:text-zinc-400"}`}
+              >
+                {formatHour(item.dt)}
+              </span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
+                alt=""
+                width={44}
+                height={44}
+                className="-my-1"
+              />
+              <span className={`text-base font-extrabold ${isNow ? "text-white" : "text-zinc-950 dark:text-white"}`}>
+                {formatTemp(item.main.temp, unit)}
+              </span>
+              <span
+                aria-hidden
+                className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-700"
+              >
+                <span
+                  className={`block h-full rounded-full ${
+                    isNow ? "bg-amber-300" : "bg-gradient-to-r from-sky-400 to-blue-600"
+                  }`}
+                  style={{ width: `${Math.round(25 + heat * 75)}%` }}
+                />
+              </span>
+              <span
+                className={`max-w-full truncate text-[11px] capitalize ${
+                  isNow ? "text-sky-100" : "text-zinc-600 dark:text-zinc-400"
+                }`}
+              >
+                {item.weather[0].description}
+              </span>
+              {item.pop > 0.05 && (
+                <span
+                  className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${
+                    isNow ? "bg-white/20 text-white" : "bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-300"
+                  }`}
+                >
+                  {Math.round(item.pop * 100)}%
+                </span>
+              )}
+              {isNow && (
+                <span className="rounded-full bg-amber-300 px-2 py-0.5 text-[11px] font-extrabold text-amber-950">
+                  Sekarang
+                </span>
+              )}
+            </li>
+          );
+        })}
+      </ol>
     </section>
   );
 }

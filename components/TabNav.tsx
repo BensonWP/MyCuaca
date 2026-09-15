@@ -11,41 +11,39 @@ export interface Tab {
 interface Props {
   tabs: Tab[];
   active: string;
-  onChange: (id: string) => void;
 }
 
-export default function TabNav({ tabs, active, onChange }: Props) {
+export default function TabNav({ tabs, active }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [indicator, setIndicator] = useState({ left: 0, width: 0 });
 
   useEffect(() => {
     if (!containerRef.current) return;
-    const activeBtn = containerRef.current.querySelector<HTMLButtonElement>(
+    const activeLink = containerRef.current.querySelector<HTMLAnchorElement>(
       `[data-tab="${active}"]`
     );
-    if (activeBtn) {
+    if (activeLink) {
       const containerRect = containerRef.current.getBoundingClientRect();
-      const btnRect = activeBtn.getBoundingClientRect();
+      const linkRect = activeLink.getBoundingClientRect();
       setIndicator({
-        left: btnRect.left - containerRect.left,
-        width: btnRect.width,
+        left: linkRect.left - containerRect.left,
+        width: linkRect.width,
       });
     }
   }, [active]);
 
   return (
     <div ref={containerRef} className="relative">
-      <div className="flex gap-1" role="tablist" aria-label="Navigasi halaman">
+      <div className="flex gap-1" aria-label="Lompat ke bagian">
         {tabs.map((tab) => {
           const isActive = tab.id === active;
           return (
-            <button
+            <a
               key={tab.id}
+              href={`#${tab.id}`}
               data-tab={tab.id}
-              role="tab"
-              aria-selected={isActive}
-              onClick={() => onChange(tab.id)}
-              className={`stateful relative z-10 flex min-h-11 items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+              aria-current={isActive ? "true" : undefined}
+              className={`stateful relative z-10 flex min-h-11 items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold ${
                 isActive
                   ? "text-sky-800 dark:text-sky-300"
                   : "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
@@ -55,7 +53,7 @@ export default function TabNav({ tabs, active, onChange }: Props) {
                 {tab.icon}
               </span>
               <span className="hidden sm:inline">{tab.label}</span>
-            </button>
+            </a>
           );
         })}
       </div>

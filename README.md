@@ -32,53 +32,59 @@ Aplikasi web prakiraan cuaca berbahasa Indonesia, dibangun dengan Next.js, TypeS
 - **Plus Jakarta Sans**: font antarmuka yang dipilih karena keterbacaan angka dan teks Indonesia
 - **OpenWeather API**: sumber data
 
-## Rute
+## Halaman
 
-| Rute | Isi |
-|---|---|
-| `/` | Ringkasan: kondisi saat ini, fakta kunci, beberapa jam ke depan, kota favorit |
-| `/prakiraan` | Pemilih hari 5 hari dan rincian tiga jam per hari |
-| `/peta` | Peta layar besar dengan lapisan awan, hujan, dan suhu |
-| `/udara` | Skala AQI, komponen polutan, dan waktu pengukuran |
-| `/kota` | Kota aktif, favorit, riwayat, dan lokasi pengguna |
+Satu halaman (`/`) berisi lima bagian; navigasi header dan tombol pintasan adalah anchor yang scroll ke bagian terkait (scroll-spy menandai bagian aktif):
+
+| Bagian | Anchor | Isi |
+|---|---|---|
+| Ringkasan | `#ringkasan` | Kondisi saat ini, fakta kunci, beberapa jam ke depan, kota favorit |
+| Prakiraan | `#prakiraan` | Pemilih hari 5 hari dan rincian tiga jam per hari |
+| Peta | `#peta` | Peta Leaflet: badge suhu + popup detail kota, lima lapisan cuaca, klik titik untuk inspeksi, tombol lokasi saya |
+| Udara | `#udara` | Skala AQI, komponen polutan, dan waktu pengukuran |
+| Kota | `#kota` | Kota aktif, favorit, riwayat, dan lokasi pengguna |
 
 ## Arsitektur
 
 ```
 app/
-├── page.tsx                          # Rute ringkasan (server + HomeScreen)
-├── prakiraan/page.tsx                # Rute prakiraan
-├── peta/page.tsx                     # Rute peta
-├── udara/page.tsx                    # Rute udara
-├── kota/page.tsx                     # Rute kota
-├── layout.tsx                        # Metadata, font, provider, header, footer
+├── page.tsx                          # Satu halaman: lima bagian + scroll-spy
+├── layout.tsx                        # Metadata, font, provider, footer
 ├── weather-provider.tsx              # State global kota, satuan, data, favorit, riwayat
-├── globals.css                       # Tailwind dan token tema
+├── theme-provider.tsx                # Tema terang/gelap/sistem
+├── globals.css                       # Tailwind, token tema, smooth scroll
 └── api/
     ├── weather/route.ts              # Proxy semua endpoint data (GET ?type=)
     └── tile/[layer]/[z]/[x]/[y]/route.ts   # Proxy tile peta
 components/
-├── SiteHeader.tsx                    # Header, navigasi desktop, navigasi bawah seluler
+├── SiteHeader.tsx                    # Header lengket + pintasan bagian
+├── TabNav.tsx                        # Tautan antar-bagian (desktop)
 ├── CitySearch.tsx                    # Pencarian kota dan riwayat
-├── UnitSwitch.tsx                    # Pilihan satuan suhu
-├── HomeScreen.tsx                    # Layar ringkasan
+├── HeaderControls.tsx                # Kapsul gabungan tema + satuan suhu
+├── SectionIntro.tsx                  # Judul bagian: eyebrow + judul + deskripsi
+├── HomeScreen.tsx                    # Bagian ringkasan
 ├── SkyHero.tsx                       # Panel kondisi saat ini yang mengikuti cuaca
+├── SunArc.tsx                        # Busur perjalanan matahari
+├── WindDial.tsx                      # Dial kompas angin
 ├── KeyFacts.tsx                      # Fakta kunci hari ini
 ├── HourlyTimeline.tsx                # Linimasa tiga jam
-├── ForecastScreen.tsx                # Layar prakiraan
-├── DailySelector.tsx                 # Pemilih hari
 ├── WarningList.tsx                   # Teks peringatan cuaca
-├── MapScreen.tsx                     # Layar peta
+├── ForecastScreen.tsx                # Bagian prakiraan
+├── TempStripes.tsx                   # Strip 5 hari (pilih hari)
+├── TempCurve.tsx                     # Kurva suhu per 3 jam
+├── MapScreen.tsx                     # Bagian peta
 ├── MapView.tsx                       # Leaflet dan pemilih lapisan
-├── AirScreen.tsx                     # Layar kualitas udara
+├── AirScreen.tsx                     # Bagian kualitas udara
 ├── AqiScale.tsx                      # Skala dan tabel AQI
-├── CitiesScreen.tsx                  # Layar kota
+├── CitiesScreen.tsx                  # Bagian kota
 ├── CityManager.tsx                   # Favorit, riwayat, dan lokasi
 └── Status.tsx                        # Status muat, kosong, galat, dan offline
 lib/
 ├── openweather.ts                    # Tipe TS + fetch helper semua endpoint
 ├── forecast.ts                       # Agregasi harian dan peringatan
+├── format.ts                         # Format jam dan arah mata angin
 ├── sky.ts                            # Tema hero berdasarkan ikon cuaca
+├── theme.ts                          # Penyimpanan preferensi tema
 └── storage.ts                        # localStorage: kota, favorit, riwayat, satuan
 ```
 
@@ -88,6 +94,8 @@ API key OpenWeather **hanya ada di server-side** (`process.env.OPENWEATHER_API_K
 
 - Data cuaca → `GET /api/weather?type=...` → route handler menambahkan key
 - Tile peta → `GET /api/tile/...` → tanpa ini, key akan terekspos di URL gambar (`?appid=`)
+
+Bila lapisan tile gagal (key belum diset di hosting, atau key tidak punya akses **Weather Maps**), `MapView` menampilkan peringatan inline dan peta dasar tetap berfungsi penuh.
 
 ### `GET /api/weather`: Parameter
 
@@ -137,7 +145,7 @@ Semua free tier, satu key (limit 60 call/menit, cukup untuk app dengan cache 10 
 | Search kota | `GET /geo/1.0/direct` |
 | Reverse geocode | `GET /geo/1.0/reverse` |
 | Kualitas udara | `GET /data/2.5/air_pollution` |
-| Tile peta | `GET /map/{layer}/{z}/{x}/{y}.png` |
+| Tile peta | `GET /map/{layer}/{z}/{x}/{y}.png` (butuh akses Weather Maps pada key) |
 
 ## Format Response Utama (ringkas)
 

@@ -3,9 +3,8 @@
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useWeather } from "@/app/weather-provider";
-import { useTheme } from "@/app/theme-provider";
 import type { MapLayer } from "@/components/MapView";
-import { ErrorBlock, Horizon, LoadingBlock, OfflineBanner, RefreshBanner } from "@/components/Status";
+import SectionIntro from "@/components/SectionIntro";
 
 const MapView = dynamic(() => import("@/components/MapView"), {
   ssr: false,
@@ -13,34 +12,30 @@ const MapView = dynamic(() => import("@/components/MapView"), {
 });
 
 export default function MapScreen() {
-  const { city, matchedData, loading, error, offline, updatedAt, refresh } = useWeather();
-  const { resolved } = useTheme();
+  const { city, matchedData } = useWeather();
   const data = matchedData;
   const [layer, setLayer] = useState<MapLayer>("clouds");
 
-  if (loading && !data) return <LoadingBlock label="Memuat peta" />;
-  if ((error && !data) || !data || !city) {
-    return <ErrorBlock message={error ?? "Peta belum tersedia."} onRetry={refresh} />;
-  }
+  if (!data || !city) return null;
 
   return (
     <div className="flex flex-col gap-6">
-      {offline && <OfflineBanner updatedAt={updatedAt} />}
-      {error && !loading && !offline && <RefreshBanner message={error} onRetry={refresh} />}
-      <div>
-        <p className="text-sm text-zinc-700 dark:text-zinc-300">Konteks spasial untuk {data.current.name}</p>
-        <h2 className="mt-1 text-3xl font-extrabold tracking-tight text-zinc-950 sm:text-4xl dark:text-white">
-          Peta cuaca
-        </h2>
-        <Horizon />
-      </div>
+      <SectionIntro
+        eyebrow={`Konteks spasial untuk ${data.current.name}`}
+        title="Peta cuaca"
+      />
       <MapView
         lat={data.current.coord.lat}
         lon={data.current.coord.lon}
         cityName={data.current.name}
+        temp={Math.round(data.current.main.temp)}
+        feelsLike={Math.round(data.current.main.feels_like)}
+        humidity={data.current.main.humidity}
+        windSpeed={data.current.wind.speed}
+        description={data.current.weather[0]?.description ?? "-"}
+        icon={data.current.weather[0]?.icon ?? "01d"}
         layer={layer}
         onLayerChange={setLayer}
-        dark={resolved === "gelap"}
       />
     </div>
   );

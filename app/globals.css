@@ -30,6 +30,13 @@ body {
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
+/* Lompat antar bagian saat navigasi di klik. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 :focus-visible {
   outline: 2px solid #0369a1;
   outline-offset: 2px;
@@ -49,9 +56,213 @@ body {
   font: inherit;
 }
 
+.ow-layer {
+  transition: opacity 250ms ease;
+}
+
+/* Mode malam: gelapkan tile dasar OSM via filter. Hanya .ow-base yang kena —
+   overlay cuaca (.ow-layer) dan marker tidak ikut terbalik. */
+:root.dark .ow-base {
+  filter: invert(100%) hue-rotate(180deg) brightness(0.92) contrast(0.92);
+}
+
+/* Badge suhu di atas peta: pil ikon + angka, ikut tema terang/gelap. */
+.ow-badge-wrap {
+  background: none;
+  border: none;
+}
+
+.ow-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 10px 2px 2px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 2px solid #0369a1;
+  color: #18181b;
+  font-size: 14px;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.3);
+  white-space: nowrap;
+}
+
+:root.dark .ow-badge {
+  background: #18181b;
+  border-color: #7dd3fc;
+  color: #fafafa;
+}
+
+.ow-popup {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Tombol lokasi: lingkaran 40px agar mudah disentuh. */
+.ow-locate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid #d4d4d8;
+  color: #0369a1;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.3);
+}
+
+:root.dark .ow-locate {
+  background: #18181b;
+  border-color: #52525b;
+  color: #7dd3fc;
+}
+
 /* Transisi 150ms khusus perubahan warna state terpilih. */
 .stateful {
-  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.shimmer {
+  background: linear-gradient(100deg, #e4e4e7 30%, #fafafa 50%, #e4e4e7 70%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+:root.dark .shimmer {
+  background: linear-gradient(100deg, #27272a 30%, #3f3f46 50%, #27272a 70%);
+  background-size: 200% 100%;
+}
+
+/* --- Efek cuaca hero (dekoratif, aria-hidden) --- */
+.wx-cloud {
+  position: absolute;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.22);
+  filter: blur(2px);
+}
+.wx-cloud-a {
+  width: 220px;
+  height: 56px;
+  top: 12%;
+  left: -240px;
+  animation: drift 26s linear infinite;
+}
+.wx-cloud-b {
+  width: 150px;
+  height: 40px;
+  top: 34%;
+  left: -170px;
+  animation: drift 38s linear infinite;
+  animation-delay: -12s;
+  opacity: 0.8;
+}
+.wx-cloud-c {
+  width: 280px;
+  height: 64px;
+  top: 58%;
+  left: -300px;
+  animation: drift 48s linear infinite;
+  animation-delay: -24s;
+  opacity: 0.6;
+}
+
+.sun-core {
+  position: absolute;
+  top: 10%;
+  right: 8%;
+  width: 92px;
+  height: 92px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, #fefce8 0%, #fde68a 45%, rgba(253, 230, 138, 0) 70%);
+}
+.sun-rays {
+  position: absolute;
+  top: calc(10% - 24px);
+  right: calc(8% - 24px);
+  width: 140px;
+  height: 140px;
+  border-radius: 9999px;
+  background: repeating-conic-gradient(rgba(255, 255, 255, 0.35) 0 6deg, transparent 6deg 18deg);
+  -webkit-mask: radial-gradient(circle, transparent 44px, black 46px);
+  mask: radial-gradient(circle, transparent 44px, black 46px);
+  animation: spin-slow 24s linear infinite;
+}
+
+.moon-glow {
+  position: absolute;
+  top: 8%;
+  right: 10%;
+  width: 76px;
+  height: 76px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 35% 35%, #fefce8, #e2e8f0 60%, rgba(226, 232, 240, 0) 72%);
+  box-shadow: 0 0 60px 12px rgba(226, 232, 240, 0.25);
+}
+
+.wx-star {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 9999px;
+  background: white;
+  opacity: 0.9;
+  animation: twinkle 2.8s ease-in-out infinite;
+}
+
+.rain-drop {
+  position: absolute;
+  top: -20px;
+  width: 2px;
+  height: 18px;
+  border-radius: 9999px;
+  background: rgba(186, 230, 253, 0.9);
+  animation: rainfall 0.9s linear infinite;
+}
+
+.snow-flake {
+  position: absolute;
+  top: -12px;
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.95);
+  animation: snowfall 3.4s linear infinite;
+}
+
+.wx-bolt {
+  position: absolute;
+  top: 16%;
+  left: 12%;
+  width: 26px;
+  height: 64px;
+  background: #fde047;
+  clip-path: polygon(60% 0, 15% 55%, 45% 55%, 35% 100%, 85% 42%, 55% 42%);
+  animation: bolt 2.2s ease-in-out infinite;
+  filter: drop-shadow(0 0 12px rgba(253, 224, 71, 0.9));
+}
+
+.fog-band {
+  position: absolute;
+  left: -20%;
+  width: 140%;
+  height: 44px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+  filter: blur(1px);
+}
+.fog-a {
+  top: 30%;
+  animation: fog-slide 18s ease-in-out infinite alternate;
+}
+.fog-b {
+  top: 60%;
+  animation: fog-slide 26s ease-in-out infinite alternate-reverse;
 }
 
 /* Animasi hanya bila pengguna tidak meminta reduced motion. */
@@ -61,6 +272,9 @@ body {
   }
   .animate-rise {
     animation: rise 500ms ease-out both;
+  }
+  .animate-drift {
+    animation: drift 30s linear infinite;
   }
 }
 
@@ -85,21 +299,91 @@ body {
   }
 }
 
-/* Transisi konten tab: fade + slide ringan */
-@media (prefers-reduced-motion: no-preference) {
-  .tab-content {
-    animation: tabIn 280ms ease-out both;
+@keyframes drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(100vw + 320px));
   }
 }
 
-@keyframes tabIn {
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes rainfall {
   from {
+    transform: translateY(-10px) rotate(12deg);
     opacity: 0;
-    transform: translateY(8px);
+  }
+  20% {
+    opacity: 1;
   }
   to {
+    transform: translateY(340px) rotate(12deg);
+    opacity: 0.4;
+  }
+}
+
+@keyframes snowfall {
+  from {
+    transform: translateY(-10px) translateX(0);
+    opacity: 0;
+  }
+  20% {
     opacity: 1;
-    transform: none;
+  }
+  to {
+    transform: translateY(340px) translateX(30px);
+    opacity: 0.6;
+  }
+}
+
+@keyframes bolt {
+  0%,
+  55%,
+  100% {
+    opacity: 0;
+  }
+  60%,
+  70% {
+    opacity: 1;
+  }
+  65% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes fog-slide {
+  from {
+    transform: translateX(-4%);
+  }
+  to {
+    transform: translateX(4%);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
   }
 }
 

@@ -1,41 +1,35 @@
 "use client";
 
-import { useWeather } from "@/app/weather-provider";
 import CitySearch from "@/components/CitySearch";
-import ThemeSwitch from "@/components/ThemeSwitch";
-import UnitSwitch from "@/components/UnitSwitch";
+import HeaderControls from "@/components/HeaderControls";
 import TabNav, { type Tab } from "@/components/TabNav";
 
 interface Props {
   tabs: Tab[];
   activeTab: string;
-  onTabChange: (id: string) => void;
 }
 
-export default function SiteHeader({ tabs, activeTab, onTabChange }: Props) {
-  const { unit, switchUnit } = useWeather();
-
+export default function SiteHeader({ tabs, activeTab }: Props) {
   return (
-    <header className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
+    <header className="sticky top-0 z-30 border-b border-zinc-200 bg-white/95 backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-950/95">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 py-4 sm:px-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <button onClick={() => onTabChange("ringkasan")} className="text-xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+          <a href="#ringkasan" className="text-xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
             <span className="text-sky-700 dark:text-sky-300">My</span>Cuaca
-          </button>
+          </a>
           <div className="flex flex-wrap items-center gap-2">
-            <ThemeSwitch />
-            <UnitSwitch unit={unit} onChange={switchUnit} />
+            <HeaderControls />
           </div>
         </div>
         <CitySearch compact />
         {/* Desktop tab nav */}
         <div className="hidden sm:block">
-          <TabNav tabs={tabs} active={activeTab} onChange={onTabChange} />
+          <TabNav tabs={tabs} active={activeTab} />
         </div>
       </div>
       {/* Mobile bottom tab nav */}
       <nav
-        aria-label="Navigasi seluler"
+        aria-label="Lompat ke bagian"
         className="fixed inset-x-0 bottom-0 z-40 border-t border-zinc-200 bg-white pb-[env(safe-area-inset-bottom)] sm:hidden dark:border-zinc-800 dark:bg-zinc-950"
       >
         <div className="relative">
@@ -43,11 +37,10 @@ export default function SiteHeader({ tabs, activeTab, onTabChange }: Props) {
             {tabs.map((tab) => {
               const isActive = tab.id === activeTab;
               return (
-                <button
+                <a
                   key={tab.id}
-                  role="tab"
-                  aria-selected={isActive}
-                  onClick={() => onTabChange(tab.id)}
+                  href={`#${tab.id}`}
+                  aria-current={isActive ? "true" : undefined}
                   className={`stateful flex min-h-14 flex-col items-center justify-center gap-1 text-xs font-semibold ${
                     isActive
                       ? "text-sky-800 dark:text-sky-300"
@@ -58,7 +51,7 @@ export default function SiteHeader({ tabs, activeTab, onTabChange }: Props) {
                     {tab.icon}
                   </span>
                   {tab.label}
-                </button>
+                </a>
               );
             })}
           </div>

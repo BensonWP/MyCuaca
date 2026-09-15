@@ -8,6 +8,10 @@ export async function GET(_req: Request, ctx: TileCtx) {
     const target = tileUrl(layer, Number(z), Number(x), Number(y));
     const res = await fetch(target);
     if (!res.ok) throw new OpenWeatherError(res.status, `Tile error ${res.status}`);
+    const contentType = res.headers.get("content-type") ?? "";
+    if (!contentType.includes("image/")) {
+      throw new OpenWeatherError(502, `Tile error ${res.status}`);
+    }
     const buf = await res.arrayBuffer();
     return new Response(buf, {
       headers: { "Content-Type": "image/png", "Cache-Control": "public, max-age=600" },
