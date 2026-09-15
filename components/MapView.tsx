@@ -31,12 +31,6 @@ interface LayerMeta {
   swatch: string;
 }
 
-interface InspectCurrent {
-  main: { temp: number; feels_like: number; humidity: number };
-  weather?: { description: string; icon: string }[];
-  wind: { speed: number };
-}
-
 interface ReverseItem {
   name: string;
 }
@@ -125,7 +119,7 @@ function infoPopup(
   return (
     `<div class="ow-popup"><b>${esc(name)}</b><br />` +
     `${esc(description)}, ${temp}° (terasa ${feelsLike}°)<br />` +
-    `Angin ${windSpeed} m/s · Lembap ${humidity}%</div>`
+    `Angin ${windSpeed} km/jam · Lembap ${humidity}%</div>`
   );
 }
 
@@ -156,6 +150,8 @@ export default function MapView({
   const targetRef = useRef<MapLayer>(layer);
   const seqRef = useRef(0);
   const firstCityRef = useRef(true);
+  // Snapshot titik awal: efek init mount-once, update kota ditangani efek [lat, lon].
+  const initCenterRef = useRef<[number, number]>([lat, lon]);
   const [overlayError, setOverlayError] = useState(false);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
@@ -207,32 +203,25 @@ export default function MapView({
     setBusy(true);
     setNotice(null);
     try {
-      const [curRes, revRes] = await Promise.all([
-        fetch(`/api/weather?type=current&lat=${pointLat}&lon=${pointLon}`),
-        fetch(`/api/weather?type=reverse&lat=${pointLat}&lon=${pointLon}`),
-      ]);
-      if (!curRes.ok) throw new Error("current");
-      const cur = (await curRes.json()) as InspectCurrent;
+      // BMKG-only: tidak ada endpoint cuaca-per-titik lagi. Tampilkan nama
+      // lokasi (reverse geocode) + koordinat saja.
+      const revRes = await fetch(`/api/weather?type=reverse&lat=${pointLat}&lon=${pointLon}`);
       const rev = revRes.ok ? ((await revRes.json()) as ReverseItem[]) : [];
       if (seq !== seqRef.current) return;
       const map = mapRef.current;
       if (!map) return;
       const name = rev[0]?.name ?? `${pointLat.toFixed(2)}, ${pointLon.toFixed(2)}`;
-      const t = Math.round(cur.main.temp);
-      const ic = cur.weather?.[0]?.icon ?? "01d";
-      const desc = cur.weather?.[0]?.description ?? "-";
       if (inspectRef.current) map.removeLayer(inspectRef.current);
-      inspectRef.current = L.marker([pointLat, pointLon], {
-        icon: badgeIcon(t, ic, name),
-        title: name,
-      })
+      inspectRef.current = L.marker([pointLat, pointLon], { title: name })
         .addTo(map)
         .bindPopup(
-          infoPopup(name, t, Math.round(cur.main.feels_like), cur.main.humidity, cur.wind.speed, desc),
+          `<div class="ow-popup"><b>${esc(name)}</b><br />` +
+          `${pointLat.toFixed(3)}, ${pointLon.toFixed(3)}<br />` +
+          `Detail cuaca tersedia lewat pencarian wilayah BMKG.</div>`,
         )
         .openPopup();
     } catch {
-      if (seq === seqRef.current) setNotice("Tidak dapat memuat cuaca titik ini — coba lagi.");
+      if (seq === seqRef.current) setNotice("Tidak dapat memuat lokasi titik ini — coba lagi.");
     } finally {
       if (seq === seqRef.current) setBusy(false);
     }
@@ -274,8 +263,8 @@ export default function MapView({
   }
 
   useEffect(() => {
-    if (!containerRef.current || mapRef.current) return;
-    const map = L.map(containerRef.current).setView([lat, lon], 7);
+    if (!containerRef.current || mapRef.current || !initCenterRef.current) return;
+    const map = L.map(containerRef.current).setView(initCenterRef.current, 7);
     baseRef.current = baseLayer();
     baseRef.current.addTo(map);
     addOverlay(map, layerRef.current);
@@ -295,7 +284,6 @@ export default function MapView({
       meRef.current = null;
       baseRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

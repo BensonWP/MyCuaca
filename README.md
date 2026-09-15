@@ -1,6 +1,8 @@
-# MyCuaca
+# MyCuaca ala BMKG
 
-Aplikasi web prakiraan cuaca berbahasa Indonesia, dibangun dengan Next.js, TypeScript, Tailwind CSS, dan OpenWeather API. Dirancang untuk deploy di Vercel.
+Aplikasi web cuaca Indonesia bergaya BMKG: prakiraan per kelurahan (api.bmkg.go.id), gempa terkini + shakemap (data.bmkg.go.id), maritim gelombang (maritim.bmkg.go.id), citra radar/satelit (RainViewer), plus data global OpenWeather sebagai pelengkap. Dibangun dengan Next.js, TypeScript, Tailwind CSS. Dirancang untuk deploy di Vercel.
+
+> Aplikasi non-resmi. Wajib atribusi: BMKG sebagai sumber data cuaca/gempa/maritim.
 
 ## Fitur
 
@@ -22,6 +24,11 @@ Aplikasi web prakiraan cuaca berbahasa Indonesia, dibangun dengan Next.js, TypeS
 | 14 | Visualisasi hero | Busur matahari, dial kompas angin, dan angka suhu bertransisi |
 | 15 | Pita dan kurva suhu | Strip 5 hari skala divergen + kurva per-3-jam hari terpilih |
 | 16 | Suhu live favorit | Tiap baris favorit di halaman Kota menampilkan suhu dan ikon terkini |
+| 17 | Cuaca BMKG per kelurahan | Proxy `GET /api/bmkg/cuaca?adm4=` → hero + strip 3 hari per 3 jam |
+| 18 | Gempa terkini + shakemap | Proxy `GET /api/bmkg/gempa?jenis=all` → terbaru, M5+, dirasakan |
+| 19 | Peringatan dini | Aturan lokal dari slot BMKG + gempa M5+ (bukan produk resmi MHEWS) |
+| 20 | Maritim gelombang | Proxy meta + prakiraan pelabuhan/perairan `GET /api/bmkg/maritim` |
+| 21 | Citra radar + satelit | Proxy frame RainViewer `GET /api/bmkg/citra` → peta animasi Leaflet |
 
 ## Tech Stack
 
@@ -38,11 +45,15 @@ Satu halaman (`/`) berisi lima bagian; navigasi header dan tombol pintasan adala
 
 | Bagian | Anchor | Isi |
 |---|---|---|
-| Ringkasan | `#ringkasan` | Kondisi saat ini, fakta kunci, beberapa jam ke depan, kota favorit |
-| Prakiraan | `#prakiraan` | Pemilih hari 5 hari dan rincian tiga jam per hari |
+| Ringkasan | `#ringkasan` | Wilayah BMKG + hero BMKG, kondisi global, fakta kunci, jam ke depan, kota favorit |
+| Prakiraan | `#prakiraan` | BMKG 3 hari per 3 jam + pemilih hari 5 hari dan rincian tiga jam (global) |
+| Gempa | `#gempa` | Gempa terbaru + shakemap, filter M5+ dan dirasakan |
+| Peringatan | `#peringatan` | Peringatan otomatis dari data BMKG + gempa M5+ |
+| Maritim | `#maritim` | Gelombang, angin, arus per pelabuhan/perairan |
+| Citra | `#citra` | Animasi radar + satelit inframerah |
 | Peta | `#peta` | Peta Leaflet: badge suhu + popup detail kota, lima lapisan cuaca, klik titik untuk inspeksi, tombol lokasi saya |
 | Udara | `#udara` | Skala AQI, komponen polutan, dan waktu pengukuran |
-| Kota | `#kota` | Kota aktif, favorit, riwayat, dan lokasi pengguna |
+| Kota | `#kota` | Wilayah BMKG + kota aktif, favorit, riwayat, dan lokasi pengguna |
 
 ## Arsitektur
 
@@ -50,16 +61,30 @@ Satu halaman (`/`) berisi lima bagian; navigasi header dan tombol pintasan adala
 app/
 ├── page.tsx                          # Satu halaman: lima bagian + scroll-spy
 ├── layout.tsx                        # Metadata, font, provider, footer
-├── weather-provider.tsx              # State global kota, satuan, data, favorit, riwayat
+├── weather-provider.tsx              # State global kota, satuan, data, favorit, riwayat (OpenWeather)
+├── bmkg-provider.tsx                   # State wilayah adm4 + cuaca BMKG + gempa
 ├── theme-provider.tsx                # Tema terang/gelap/sistem
 ├── globals.css                       # Tailwind, token tema, smooth scroll
 └── api/
     ├── weather/route.ts              # Proxy semua endpoint data (GET ?type=)
-    └── tile/[layer]/[z]/[x]/[y]/route.ts   # Proxy tile peta
+    ├── tile/[layer]/[z]/[x]/[y]/route.ts   # Proxy tile peta
+    └── bmkg/
+        ├── cuaca/route.ts            # Proxy prakiraan-cuaca?adm4= (GET ?adm4=)
+        ├── gempa/route.ts            # Proxy autogempa/gempaterkini/gempadirasakan (GET ?jenis=)
+        ├── maritim/route.ts          # Proxy meta + prakiraan pelabuhan/perairan
+        └── citra/route.ts            # Proxy frame RainViewer (radar + satelit)
 components/
 ├── SiteHeader.tsx                    # Header lengket + pintasan bagian
 ├── TabNav.tsx                        # Tautan antar-bagian (desktop)
-├── CitySearch.tsx                    # Pencarian kota dan riwayat
+├── CitySearch.tsx                    # Pencarian kota dunia dan riwayat (OpenWeather)
+├── WilayahSearch.tsx                 # Pencarian wilayah Indonesia adm4 (BMKG)
+├── BmkgHero.tsx                      # Hero navy institusional dari slot BMKG
+├── BmkgStrip.tsx                     # Strip BMKG 3 hari per 3 jam
+├── GempaScreen.tsx                   # Bagian gempa + shakemap
+├── PeringatanScreen.tsx              # Bagian peringatan otomatis
+├── MaritimScreen.tsx                 # Bagian gelombang pelabuhan/perairan
+├── CitraScreen.tsx                   # Bagian radar + satelit
+├── CitraView.tsx                     # Peta animasi Leaflet RainViewer
 ├── HeaderControls.tsx                # Kapsul gabungan tema + satuan suhu
 ├── SectionIntro.tsx                  # Judul bagian: eyebrow + judul + deskripsi
 ├── HomeScreen.tsx                    # Bagian ringkasan
@@ -81,6 +106,8 @@ components/
 └── Status.tsx                        # Status muat, kosong, galat, dan offline
 lib/
 ├── openweather.ts                    # Tipe TS + fetch helper semua endpoint
+├── bmkg.ts                           # Tipe + fetch server BMKG + aturan peringatan
+├── wilayah.ts                        # 14 wilayah adm4 terverifikasi + localStorage
 ├── forecast.ts                       # Agregasi harian dan peringatan
 ├── format.ts                         # Format jam dan arah mata angin
 ├── sky.ts                            # Tema hero berdasarkan ikon cuaca

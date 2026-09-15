@@ -2,16 +2,21 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useWeather } from "@/app/weather-provider";
+import { useBmkg } from "@/app/bmkg-provider";
 import { FavCity } from "@/lib/storage";
+import { isIndonesia } from "@/lib/wilayah";
 
 export default function CitySearch({ compact = false }: { compact?: boolean }) {
   const { selectCity, history } = useWeather();
+  const { setBmkgActive } = useBmkg();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<FavCity[]>([]);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const boxRef = useRef<HTMLDivElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const onPointer = (event: MouseEvent) => {
@@ -28,17 +33,16 @@ export default function CitySearch({ compact = false }: { compact?: boolean }) {
     };
   }, []);
 
-  async function search(event: React.FormEvent) {
-    event.preventDefault();
-    const q = query.trim();
-    if (!q) {
-      setError("Isi nama kota dulu, lalu tekan Cari.");
-      return;
-    }
+  async function runSearch(q: string) {
+    abortRef.current?.abort();
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/weather?type=geocode&q=${encodeURIComponent(q)}`);
+      const res = await fetch(`/api/weather?type=geocode&q=${encodeURIComponent(q)}`, {
+        signal: ctrl.signal,
+      });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Pencarian gagal");
       const cities = (data as { name: string; lat: number; lon: number }[]).map((item) => ({
@@ -49,18 +53,39 @@ export default function CitySearch({ compact = false }: { compact?: boolean }) {
       setResults(cities);
       setOpen(true);
       if (cities.length === 0) setError("Kota tidak ditemukan. Periksa ejaan nama kota lalu coba lagi.");
-    } catch {
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
       setError("Pencarian gagal. Periksa koneksi lalu coba lagi.");
     } finally {
-      setLoading(false);
+      if (abortRef.current === ctrl) setLoading(false);
     }
   }
+
+  function search(event: React.FormEvent) {
+    event.preventDefault();
+    const q = query.trim().slice(0, 60);
+    if (!q) {
+      setError("Isi nama kota dulu, lalu tekan Cari.");
+      return;
+    }
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => void runSearch(q), 300);
+  }
+
+  useEffect(() => {
+    return () => {
+      abortRef.current?.abort();
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
 
   function pick(city: FavCity) {
     setQuery(city.name);
     setResults([]);
     setOpen(false);
     selectCity(city);
+    // Modul BMKG hanya untuk Indonesia — nonaktifkan eksplisit bila di luar.
+    setBmkgActive(isIndonesia(city.lat, city.lon));
   }
 
   const showHistory = open && results.length === 0 && query.trim() === "" && history.length > 0;

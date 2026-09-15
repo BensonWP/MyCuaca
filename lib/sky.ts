@@ -60,6 +60,14 @@ export function skyTheme(icon: string): SkyTheme {
       line: "bg-slate-900/20",
     };
   }
+  if (code === "50") {
+    return {
+      panel: "bg-gradient-to-b from-zinc-500 to-slate-500",
+      heading: "text-white",
+      body: "text-zinc-100",
+      line: "bg-white/30",
+    };
+  }
   return {
     panel: "bg-gradient-to-b from-stone-800 to-stone-600",
     heading: "text-white",

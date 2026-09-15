@@ -1,6 +1,4 @@
 import {
-  getCurrent,
-  getForecast,
   geocode,
   reverseGeocode,
   getAirPollution,
@@ -15,7 +13,7 @@ export async function GET(request: Request) {
 
   try {
     if (type === "geocode") {
-      const q = searchParams.get("q")?.trim();
+      const q = searchParams.get("q")?.trim().slice(0, 60);
       if (!q) throw new OpenWeatherError(400, "Query kosong");
       return Response.json(await geocode(q));
     }
@@ -30,20 +28,8 @@ export async function GET(request: Request) {
       throw new OpenWeatherError(400, "lat/lon tidak valid");
 
     switch (type) {
-      case "current":
-        return Response.json(await getCurrent(lat, lon));
-      case "forecast":
-        return Response.json(await getForecast(lat, lon));
       case "aqi":
         return Response.json(await getAirPollution(lat, lon));
-      case "all": {
-        const [current, forecast, aqi] = await Promise.all([
-          getCurrent(lat, lon),
-          getForecast(lat, lon),
-          getAirPollution(lat, lon),
-        ]);
-        return Response.json({ current, forecast, aqi });
-      }
       default:
         throw new OpenWeatherError(400, "type tidak valid");
     }

@@ -117,3 +117,86 @@ export function MapPinIcon({ className }: IconProps) {
     </svg>
   );
 }
+
+// Ikon navigasi tab + pintasan (satu sumber, dipakai page.tsx dan HomeScreen).
+export function SunTabIcon({ className }: IconProps) {
+  return (
+    <svg {...base(className)}>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+    </svg>
+  );
+}
+
+export function CalendarIcon({ className }: IconProps) {
+  return (
+    <svg {...base(className)}>
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <path d="M16 2v4M8 2v4M3 10h18" />
+    </svg>
+  );
+}
+
+export function MapIcon({ className }: IconProps) {
+  return (
+    <svg {...base(className)}>
+      <path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z" />
+      <path d="M8 2v16M16 6v16" />
+    </svg>
+  );
+}
+
+export function AirListIcon({ className }: IconProps) {
+  return (
+    <svg {...base(className)}>
+      <path d="M12 22c4-4 8-7.5 8-12A8 8 0 0 0 4 10c0 4.5 4 8 8 12z" />
+      <path d="M12 12V6" />
+      <path d="M8 9l4-3 4 3" />
+    </svg>
+  );
+}
+
+export function CityIcon({ className }: IconProps) {
+  return (
+    <svg {...base(className)}>
+      <path d="M3 21h18M5 21V7l8-4v18M13 21V3l6 4v14" />
+      <path d="M9 9h1M9 13h1M17 9h1M17 13h1" />
+    </svg>
+  );
+}
+
+export function QuakeIcon({ className }: IconProps) {
+  return (
+    <svg {...base(className)}>
+      <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+    </svg>
+  );
+}
+
+export function AlertIcon({ className }: IconProps) {
+  return (
+    <svg {...base(className)}>
+      <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+      <path d="M12 9v4m0 4h.01" />
+    </svg>
+  );
+}
+
+export function WavesIcon({ className }: IconProps) {
+  return (
+    <svg {...base(className)}>
+      <path d="M2 16c1.5 1 3 1 4.5 0s3-1 4.5 0 3 1 4.5 0 3-1 4.5 0" />
+      <path d="M2 20c1.5 1 3 1 4.5 0s3-1 4.5 0 3 1 4.5 0 3-1 4.5 0" />
+      <path d="M12 3v10m0 0-4-4m4 4 4-4" />
+    </svg>
+  );
+}
+
+export function CameraIcon({ className }: IconProps) {
+  return (
+    <svg {...base(className)}>
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+      <circle cx="12" cy="13" r="4" />
+    </svg>
+  );
+}

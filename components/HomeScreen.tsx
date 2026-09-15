@@ -1,46 +1,45 @@
 "use client";
 
 import { useWeather } from "@/app/weather-provider";
+import { useBmkg } from "@/app/bmkg-provider";
 import SkyHero from "@/components/SkyHero";
 import AdviceBanner from "@/components/AdviceBanner";
+import WilayahSearch from "@/components/WilayahSearch";
 import KeyFacts from "@/components/KeyFacts";
 import HourlyTimeline from "@/components/HourlyTimeline";
 import WarningList from "@/components/WarningList";
 import { EmptyBlock } from "@/components/Status";
-import { warningsForDay } from "@/lib/forecast";
+import { CalendarIcon, MapIcon } from "@/lib/icons";
 
 const SHORTCUTS = [
-  { id: "prakiraan", label: "Lihat prakiraan 5 hari", sub: "Strip + kurva suhu", card: "from-sky-500 to-blue-700", icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> },
-  { id: "peta", label: "Buka peta cuaca", sub: "Awan · hujan · angin", card: "from-emerald-500 to-teal-700", icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/><path d="M8 2v16M16 6v16"/></svg> },
-  { id: "udara", label: "Periksa kualitas udara", sub: "AQI + polutan", card: "from-amber-500 to-rose-600", icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg> },
+  { id: "prakiraan", label: "Lihat prakiraan 3 hari", sub: "Strip + kurva suhu", card: "from-sky-500 to-blue-700", icon: <CalendarIcon /> },
+  { id: "peta", label: "Buka peta cuaca", sub: "Awan · hujan · angin", card: "from-emerald-500 to-teal-700", icon: <MapIcon /> },
 ];
 
 export default function HomeScreen() {
-  const { city, matchedData, updatedAt, unit, favorites, selectCity, refresh, toggleFavoriteCity } =
-    useWeather();
-  const data = matchedData;
+  const { unit, favorites, selectCity, toggleFavoriteCity, loadAqi, aqi } = useWeather();
+  const { cuaca, cuacaLoading, cuacaError, cuacaUpdatedAt, currentConditions, cityName, cityCoords, allSlots, refresh } = useBmkg();
 
-  if (!data || !city) return null;
+  if (cuacaLoading && !cuaca) return null;
+  if (!cuaca || !currentConditions) return null;
 
-  const isFavorite = favorites.some((fav) => fav.lat === city.lat && fav.lon === city.lon);
-  const preview = data.forecast.list.slice(0, 8);
-  const warnings = warningsForDay(data.forecast.list.slice(0, 8)).map((warning) => warning.text);
+  const preview = allSlots.slice(0, 8);
   const shortcuts = favorites.slice(0, 4);
 
   return (
     <div className="flex flex-col gap-6">
+      <WilayahSearch />
       <SkyHero
-        current={data.current}
+        current={currentConditions}
+        cityName={cityName}
+        coords={cityCoords}
         unit={unit}
-        isFavorite={isFavorite}
-        onToggleFavorite={() => toggleFavoriteCity({ ...city, name: data.current.name })}
-        updatedAt={updatedAt}
+        updatedAt={cuacaUpdatedAt}
         onRefresh={refresh}
       />
-      <AdviceBanner current={data.current} upcoming={preview} aqi={data.aqi} unit={unit} />
-      <WarningList warnings={warnings} />
-      <KeyFacts current={data.current} unit={unit} />
-      <HourlyTimeline id="cuaca-beberapa-jam" title="Beberapa jam ke depan" items={preview} unit={unit} />
+      <AdviceBanner slots={preview} unit={unit} />
+      <KeyFacts current={currentConditions} unit={unit} />
+      <HourlyTimeline id="cuaca-beberapa-jam" title="Beberapa jam ke depan" slots={preview} unit={unit} />
 
       <section aria-labelledby="kota-cepat" className="rounded-2xl bg-surface p-5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">

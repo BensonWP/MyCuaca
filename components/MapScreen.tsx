@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useState } from "react";
-import { useWeather } from "@/app/weather-provider";
+import { useBmkg } from "@/app/bmkg-provider";
 import type { MapLayer } from "@/components/MapView";
 import SectionIntro from "@/components/SectionIntro";
 
@@ -12,28 +12,27 @@ const MapView = dynamic(() => import("@/components/MapView"), {
 });
 
 export default function MapScreen() {
-  const { city, matchedData } = useWeather();
-  const data = matchedData;
+  const { cityName, cityCoords, currentConditions } = useBmkg();
   const [layer, setLayer] = useState<MapLayer>("clouds");
 
-  if (!data || !city) return null;
+  if (!currentConditions) return null;
 
   return (
     <div className="flex flex-col gap-6">
       <SectionIntro
-        eyebrow={`Konteks spasial untuk ${data.current.name}`}
+        eyebrow={`Konteks spasial untuk ${cityName}`}
         title="Peta cuaca"
       />
       <MapView
-        lat={data.current.coord.lat}
-        lon={data.current.coord.lon}
-        cityName={data.current.name}
-        temp={Math.round(data.current.main.temp)}
-        feelsLike={Math.round(data.current.main.feels_like)}
-        humidity={data.current.main.humidity}
-        windSpeed={data.current.wind.speed}
-        description={data.current.weather[0]?.description ?? "-"}
-        icon={data.current.weather[0]?.icon ?? "01d"}
+        lat={cityCoords.lat}
+        lon={cityCoords.lon}
+        cityName={cityName}
+        temp={Math.round(currentConditions.temp)}
+        feelsLike={Math.round(currentConditions.temp)}
+        humidity={currentConditions.humidity}
+        windSpeed={currentConditions.windSpeed}
+        description={currentConditions.weatherDesc}
+        icon={currentConditions.icon}
         layer={layer}
         onLayerChange={setLayer}
       />

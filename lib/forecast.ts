@@ -1,4 +1,5 @@
-import type { ForecastItem } from "@/lib/openweather";
+import type { BmkgSlot } from "@/lib/bmkg";
+import { bmkgToIcon } from "@/lib/bmkg";
 
 export interface DailyCard {
   key: string;
@@ -13,33 +14,46 @@ export interface DailyCard {
   rain: number;
 }
 
-export function groupByDay(items: ForecastItem[]): Map<string, ForecastItem[]> {
-  const byDate = new Map<string, ForecastItem[]>();
-  for (const item of items) {
-    const key = item.dt_txt.slice(0, 10);
-    byDate.set(key, [...(byDate.get(key) ?? []), item]);
+function slotDateKey(slot: BmkgSlot): string {
+  const d = new Date(slot.local_datetime.replace(" ", "T"));
+  if (isNaN(d.getTime())) return "";
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function slotHour(slot: BmkgSlot): number {
+  const d = new Date(slot.local_datetime.replace(" ", "T"));
+  return isNaN(d.getTime()) ? 12 : d.getHours();
+}
+
+export function groupByDay(slots: BmkgSlot[]): Map<string, BmkgSlot[]> {
+  const byDate = new Map<string, BmkgSlot[]>();
+  for (const slot of slots) {
+    const key = slotDateKey(slot);
+    if (!key) continue;
+    byDate.set(key, [...(byDate.get(key) ?? []), slot]);
   }
   return byDate;
 }
 
-export function aggregateDaily(items: ForecastItem[]): DailyCard[] {
+export function aggregateDaily(slots: BmkgSlot[]): DailyCard[] {
   const cards: DailyCard[] = [];
-  for (const [key, list] of groupByDay(items)) {
-    const noon =
-      list.find((item) => new Date(item.dt * 1000).getHours() >= 12) ??
-      list[Math.floor(list.length / 2)];
-    const temps = list.map((item) => item.main.temp);
+  for (const [key, list] of groupByDay(slots)) {
+    if (list.length === 0) continue;
+    const mid = list[Math.floor(list.length / 2)];
+    if (!mid) continue;
+    const h = slotHour(mid);
+    const temps = list.map((s) => s.t);
     cards.push({
       key,
       date: new Date(`${key}T12:00:00`),
-      icon: noon.weather[0].icon,
-      description: noon.weather[0].description,
+      icon: bmkgToIcon(mid.weather, h),
+      description: mid.weather_desc,
       min: Math.min(...temps),
       max: Math.max(...temps),
-      pop: Math.max(...list.map((item) => item.pop)),
-      wind: Math.max(...list.map((item) => item.wind.speed)),
-      gust: Math.max(...list.map((item) => item.wind.gust ?? item.wind.speed)),
-      rain: Math.max(...list.map((item) => item.rain?.["3h"] ?? 0)),
+      pop: Math.max(...list.map((s) => s.tp > 0 ? 1 : 0)),
+      wind: Math.max(...list.map((s) => s.ws)),
+      gust: Math.max(...list.map((s) => s.ws)),
+      rain: Math.max(...list.map((s) => s.tp)),
     });
   }
   return cards;
@@ -55,35 +69,25 @@ export function formatDay(date: Date): string {
   return date.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long" });
 }
 
-export function formatHour(timestamp: number): string {
-  return new Date(timestamp * 1000).toLocaleTimeString("id-ID", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-
-
 // Ambang peringatan ditulis eksplisit agar tidak menjadi angka misterius di UI.
 export const HEAVY_RAIN_3H_MM = 10;
-export const STRONG_WIND_MS = 10.8;
-export const STRONG_GUST_MS = 13.9;
+export const STRONG_WIND_KMH = 25;
 
 export interface DayWarning {
   text: string;
 }
 
-export function warningsForDay(items: ForecastItem[]): DayWarning[] {
+export function warningsForDay(slots: BmkgSlot[]): DayWarning[] {
   const warnings: DayWarning[] = [];
-  const maxRain = Math.max(...items.map((item) => item.rain?.["3h"] ?? 0));
-  const maxWind = Math.max(...items.map((item) => item.wind.speed));
-  const maxGust = Math.max(...items.map((item) => item.wind.gust ?? item.wind.speed));
+  if (slots.length === 0) return warnings;
+  const maxRain = Math.max(...slots.map((s) => s.tp));
+  const maxWind = Math.max(...slots.map((s) => s.ws));
   if (maxRain >= HEAVY_RAIN_3H_MM) {
     warnings.push({ text: `Hujan dapat mencapai ${maxRain.toFixed(1)} mm dalam 3 jam.` });
   }
-  if (maxWind >= STRONG_WIND_MS || maxGust >= STRONG_GUST_MS) {
+  if (maxWind >= STRONG_WIND_KMH) {
     warnings.push({
-      text: `Angin maksimum ${maxWind.toFixed(1)} m/s dengan hembusan ${maxGust.toFixed(1)} m/s.`,
+      text: `Angin maksimum ${maxWind.toFixed(0)} km/jam.`,
     });
   }
   return warnings;

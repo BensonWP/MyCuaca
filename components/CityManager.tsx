@@ -50,13 +50,10 @@ function CityRow({
       </button>
       {weather && unit && (
         <span className="flex shrink-0 items-center gap-1.5 rounded-full bg-zinc-100 px-2.5 py-1 dark:bg-zinc-800" aria-label={`Suhu saat ini ${formatTemp(weather.temp, unit)}`}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`}
-            alt={weather.description}
-            width={32}
-            height={32}
-          />
+          <span className="text-lg">{weather.description.includes("Hujan") || weather.description.includes("Petir") ? "🌧" :
+               weather.description.includes("Berawan") ? "☁" :
+               weather.description.includes("Cerah") ? "☀" :
+               weather.description.includes("Kabut") ? "🌫" : "🌤"}</span>
           <span className="text-sm font-extrabold text-zinc-950 dark:text-white">
             {formatTemp(weather.temp, unit)}
           </span>

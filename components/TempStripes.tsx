@@ -30,7 +30,7 @@ export default function TempStripes({ days, selectedKey, onSelect, unit }: Props
             key={day.key}
             onClick={() => onSelect(day.key)}
             aria-pressed={active}
-            aria-label={`${formatDay(day.date)}, ${day.description}, maks ${formatTemp(day.max, unit)}, min ${formatTemp(day.min, unit)}, hujan ${Math.round(day.pop * 100)} persen`}
+            aria-label={`${formatDay(day.date)}, ${day.description}, maks ${formatTemp(day.max, unit)}, min ${formatTemp(day.min, unit)}`}
             className={`stateful relative min-h-11 min-w-[7.5rem] shrink-0 snap-center overflow-hidden rounded-2xl border p-3 text-center transition-transform hover:-translate-y-1 sm:min-w-0 sm:snap-none ${
               active
                 ? "border-sky-500 bg-gradient-to-b from-sky-600 to-blue-700 text-white shadow-lg"
@@ -53,22 +53,20 @@ export default function TempStripes({ days, selectedKey, onSelect, unit }: Props
             <span className={`block text-[11px] font-semibold ${active ? "text-sky-100" : "text-zinc-500 dark:text-zinc-400"}`}>
               {day.date.toLocaleDateString("id-ID", { day: "numeric", month: "short" })}
             </span>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={`https://openweathermap.org/img/wn/${day.icon}@2x.png`}
-              alt={day.description}
-              width={52}
-              height={52}
-              className="mx-auto mt-1 drop-shadow"
-            />
+            <span className={`mt-1 block text-2xl ${active ? "" : ""}`}>
+              {day.description.includes("Hujan") || day.description.includes("Petir") ? "🌧" :
+               day.description.includes("Berawan") ? "☁" :
+               day.description.includes("Cerah") ? "☀" :
+               day.description.includes("Kabut") ? "🌫" : "🌤"}
+            </span>
             <span className={`mt-1 block text-sm font-extrabold ${active ? "text-white" : "text-zinc-950 dark:text-white"}`}>
               {formatTemp(day.max, unit)} <span className={`font-semibold ${active ? "text-sky-200" : "text-zinc-500 dark:text-zinc-400"}`}>/ {formatTemp(day.min, unit)}</span>
             </span>
             <span aria-hidden className={`mt-2 h-1.5 w-full overflow-hidden rounded-full ${active ? "bg-white/25" : "bg-zinc-200 dark:bg-zinc-700"}`}>
               <span className="block h-full rounded-full bg-gradient-to-r from-sky-400 via-amber-300 to-rose-500" style={{ marginLeft: `${left}%`, width: `${width}%` }} />
             </span>
-            <span className={`mt-2 inline-block rounded-full px-2 py-0.5 text-[11px] font-bold ${active ? "bg-white/20 text-white" : day.pop >= 0.4 ? "bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-300" : "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300"}`}>
-              {Math.round(day.pop * 100)}% hujan
+            <span className={`mt-2 inline-block rounded-full px-2 py-0.5 text-[11px] font-bold ${active ? "bg-white/20 text-white" : day.rain > 0 ? "bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-300" : "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300"}`}>
+              {day.rain > 0 ? `🌧 ${day.rain.toFixed(1)}mm` : "Kering"}
             </span>
           </button>
         );

@@ -1,29 +1,34 @@
 "use client";
 
-import type { ForecastItem } from "@/lib/openweather";
+import type { BmkgSlot } from "@/lib/bmkg";
 import { Unit, formatTemp } from "@/lib/storage";
-import { formatHour } from "@/lib/forecast";
+import { formatBmkgHour } from "@/lib/format";
 
 interface Props {
-  items: ForecastItem[];
+  slots: BmkgSlot[];
   unit: Unit;
   title: string;
 }
 
-export default function TempCurve({ items, unit, title }: Props) {
-  if (items.length === 0) return null;
-  const temps = items.map((item) => item.main.temp);
+function parseSlotTs(s: BmkgSlot): number {
+  const d = new Date(s.local_datetime.replace(" ", "T"));
+  return isNaN(d.getTime()) ? 0 : d.getTime() / 1000;
+}
+
+export default function TempCurve({ slots, unit, title }: Props) {
+  if (slots.length === 0) return null;
+  const temps = slots.map((s) => s.t);
   const min = Math.min(...temps);
   const max = Math.max(...temps);
   const span = max - min || 1;
   const W = 600;
   const H = 180;
   const PAD = 36;
-  const x = (i: number) => PAD + (i / Math.max(1, items.length - 1)) * (W - PAD * 2);
+  const x = (i: number) => PAD + (i / Math.max(1, slots.length - 1)) * (W - PAD * 2);
   const y = (t: number) => PAD + (1 - (t - min) / span) * (H - PAD * 2);
-  const points = items.map((item, i) => `${x(i)},${y(item.main.temp)}`).join(" ");
-  const smooth = items
-    .map((item, i) => `${i === 0 ? "M" : "L"}${x(i).toFixed(1)},${y(item.main.temp).toFixed(1)}`)
+  const points = slots.map((s, i) => `${x(i)},${y(s.t)}`).join(" ");
+  const smooth = slots
+    .map((s, i) => `${i === 0 ? "M" : "L"}${x(i).toFixed(1)},${y(s.t).toFixed(1)}`)
     .join(" ");
   const area = `${PAD},${H - PAD} ${points} ${W - PAD},${H - PAD}`;
   const minIndex = temps.indexOf(min);
@@ -32,7 +37,7 @@ export default function TempCurve({ items, unit, title }: Props) {
   return (
     <figure
       role="img"
-      aria-label={`${title}: suhu terendah ${formatTemp(min, unit)} pukul ${formatHour(items[minIndex].dt)}, tertinggi ${formatTemp(max, unit)} pukul ${formatHour(items[maxIndex].dt)}`}
+      aria-label={`${title}: suhu terendah ${formatTemp(min, unit)} pukul ${formatBmkgHour(slots[minIndex].local_datetime, slots[minIndex].datetime)}, tertinggi ${formatTemp(max, unit)} pukul ${formatBmkgHour(slots[maxIndex].local_datetime, slots[maxIndex].datetime)}`}
       className="overflow-hidden rounded-2xl border border-zinc-200/70 bg-white p-5 shadow-sm sm:p-6 dark:border-zinc-700/70 dark:bg-zinc-900"
     >
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
@@ -85,13 +90,13 @@ export default function TempCurve({ items, unit, title }: Props) {
           strokeLinejoin="round"
           strokeLinecap="round"
         />
-        {items.map((item, i) => {
+        {slots.map((s, i) => {
           const isExtreme = i === minIndex || i === maxIndex;
           return (
-            <g key={item.dt}>
+            <g key={s.local_datetime}>
               <circle
                 cx={x(i)}
-                cy={y(item.main.temp)}
+                cy={y(s.t)}
                 r={isExtreme ? 6 : 3.5}
                 className={isExtreme ? "fill-amber-400 stroke-white" : "fill-white stroke-sky-600 dark:fill-zinc-900"}
                 strokeWidth={isExtreme ? 2 : 2.5}
@@ -99,17 +104,17 @@ export default function TempCurve({ items, unit, title }: Props) {
               {isExtreme && (
                 <text
                   x={x(i)}
-                  y={y(item.main.temp) - 12}
+                  y={y(s.t) - 12}
                   textAnchor="middle"
                   fontSize="12"
                   fontWeight="bold"
                   className="fill-zinc-900 dark:fill-white"
                 >
-                  {formatTemp(item.main.temp, unit)}
+                  {formatTemp(s.t, unit)}
                 </text>
               )}
               <text x={x(i)} y={H - 8} textAnchor="middle" fontSize="11" fontWeight={isExtreme ? "bold" : "normal"} className="fill-zinc-600 dark:fill-zinc-400">
-                {formatHour(item.dt)}
+                {formatBmkgHour(s.local_datetime, s.datetime)}
               </text>
             </g>
           );

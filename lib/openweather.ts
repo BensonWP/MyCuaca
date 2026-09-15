@@ -1,47 +1,5 @@
-export interface WeatherDesc {
-  id: number;
-  main: string;
-  description: string;
-  icon: string;
-}
-
-export interface CurrentWeather {
-  coord: { lat: number; lon: number };
-  weather: WeatherDesc[];
-  main: {
-    temp: number;
-    feels_like: number;
-    temp_min: number;
-    temp_max: number;
-    humidity: number;
-    pressure: number;
-  };
-  visibility: number;
-  wind: { speed: number; deg: number; gust?: number };
-  clouds: { all: number };
-  rain?: { "1h"?: number };
-  snow?: { "1h"?: number };
-  dt: number;
-  sys: { country: string; sunrise: number; sunset: number };
-  name: string;
-}
-
-export interface ForecastItem {
-  dt: number;
-  main: { temp: number; feels_like: number; humidity: number; pressure: number };
-  weather: WeatherDesc[];
-  wind: { speed: number; deg: number; gust?: number };
-  clouds: { all: number };
-  pop: number;
-  rain?: { "3h"?: number };
-  snow?: { "3h"?: number };
-  dt_txt: string;
-}
-
-export interface ForecastResponse {
-  city: { name: string; country: string; coord: { lat: number; lon: number } };
-  list: ForecastItem[];
-}
+// Hanya menyimpan geocode, AQI, dan tile URL dari OpenWeather.
+// Cuaca utama sudah menggunakan BMKG.
 
 export interface GeocodeResult {
   name: string;
@@ -81,20 +39,21 @@ async function owFetch<T>(path: string, params: Record<string, string | number>)
   url.searchParams.set("appid", key);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, String(v));
 
-  const res = await fetch(url, { next: { revalidate: 600 } });
-  if (!res.ok) {
-    const body = (await res.json().catch(() => null)) as WeatherError | null;
-    throw new OpenWeatherError(res.status, body?.message ?? `OpenWeather error ${res.status}`);
+  const ctrl = new AbortController();
+  const id = setTimeout(() => ctrl.abort(), 15000);
+  try {
+    const res = await fetch(url, { next: { revalidate: 600 }, signal: ctrl.signal });
+    if (!res.ok) {
+      const body = (await res.json().catch(() => null)) as WeatherError | null;
+      throw new OpenWeatherError(res.status, body?.message ?? `OpenWeather error ${res.status}`);
+    }
+    return res.json() as Promise<T>;
+  } catch (err) {
+    if (err instanceof OpenWeatherError) throw err;
+    throw new OpenWeatherError(502, "Gagal menghubungi OpenWeather");
+  } finally {
+    clearTimeout(id);
   }
-  return res.json() as Promise<T>;
-}
-
-export function getCurrent(lat: number, lon: number, lang = "id") {
-  return owFetch<CurrentWeather>("/data/2.5/weather", { lat, lon, lang, units: "metric" });
-}
-
-export function getForecast(lat: number, lon: number, lang = "id") {
-  return owFetch<ForecastResponse>("/data/2.5/forecast", { lat, lon, lang, units: "metric" });
 }
 
 export function geocode(query: string) {

@@ -34,7 +34,7 @@ export default function TabNav({ tabs, active }: Props) {
 
   return (
     <div ref={containerRef} className="relative">
-      <div className="flex gap-1" aria-label="Lompat ke bagian">
+      <div className="flex flex-wrap gap-1" aria-label="Lompat ke bagian">
         {tabs.map((tab) => {
           const isActive = tab.id === active;
           return (
@@ -43,7 +43,7 @@ export default function TabNav({ tabs, active }: Props) {
               href={`#${tab.id}`}
               data-tab={tab.id}
               aria-current={isActive ? "true" : undefined}
-              className={`stateful relative z-10 flex min-h-11 items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold ${
+              className={`stateful relative z-10 flex min-h-11 items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-semibold ${
                 isActive
                   ? "text-sky-800 dark:text-sky-300"
                   : "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"

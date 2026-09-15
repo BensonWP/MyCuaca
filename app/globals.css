@@ -18,7 +18,6 @@
   --color-background: var(--background);
   --color-surface: var(--surface);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
 }
 
 /* Tanpa JavaScript, tema terang yang tampil agar seluruh halaman tetap koheren:
@@ -143,34 +142,74 @@ body {
 /* --- Efek cuaca hero (dekoratif, aria-hidden) --- */
 .wx-cloud {
   position: absolute;
+  background: rgba(255, 255, 255, 0.25);
+  filter: blur(1px);
+}
+.wx-cloud::before,
+.wx-cloud::after {
+  content: "";
+  position: absolute;
+  background: inherit;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.22);
-  filter: blur(2px);
 }
 .wx-cloud-a {
-  width: 220px;
-  height: 56px;
-  top: 12%;
-  left: -240px;
-  animation: drift 26s linear infinite;
+  width: 120px;
+  height: 40px;
+  top: 14%;
+  left: -160px;
+  border-radius: 9999px;
+}
+.wx-cloud-a::before {
+  width: 50px;
+  height: 50px;
+  top: -20px;
+  left: 18px;
+}
+.wx-cloud-a::after {
+  width: 70px;
+  height: 60px;
+  top: -28px;
+  left: 42px;
 }
 .wx-cloud-b {
-  width: 150px;
+  width: 90px;
+  height: 32px;
+  top: 36%;
+  left: -120px;
+  border-radius: 9999px;
+  opacity: 0.7;
+}
+.wx-cloud-b::before {
+  width: 40px;
   height: 40px;
-  top: 34%;
-  left: -170px;
-  animation: drift 38s linear infinite;
-  animation-delay: -12s;
-  opacity: 0.8;
+  top: -16px;
+  left: 14px;
+}
+.wx-cloud-b::after {
+  width: 55px;
+  height: 48px;
+  top: -22px;
+  left: 32px;
 }
 .wx-cloud-c {
-  width: 280px;
+  width: 160px;
+  height: 48px;
+  top: 56%;
+  left: -200px;
+  border-radius: 9999px;
+  opacity: 0.55;
+}
+.wx-cloud-c::before {
+  width: 64px;
   height: 64px;
-  top: 58%;
-  left: -300px;
-  animation: drift 48s linear infinite;
-  animation-delay: -24s;
-  opacity: 0.6;
+  top: -28px;
+  left: 24px;
+}
+.wx-cloud-c::after {
+  width: 88px;
+  height: 72px;
+  top: -34px;
+  left: 56px;
 }
 
 .sun-core {
@@ -192,7 +231,6 @@ body {
   background: repeating-conic-gradient(rgba(255, 255, 255, 0.35) 0 6deg, transparent 6deg 18deg);
   -webkit-mask: radial-gradient(circle, transparent 44px, black 46px);
   mask: radial-gradient(circle, transparent 44px, black 46px);
-  animation: spin-slow 24s linear infinite;
 }
 
 .moon-glow {
@@ -213,7 +251,6 @@ body {
   border-radius: 9999px;
   background: white;
   opacity: 0.9;
-  animation: twinkle 2.8s ease-in-out infinite;
 }
 
 .rain-drop {
@@ -223,7 +260,6 @@ body {
   height: 18px;
   border-radius: 9999px;
   background: rgba(186, 230, 253, 0.9);
-  animation: rainfall 0.9s linear infinite;
 }
 
 .snow-flake {
@@ -233,7 +269,6 @@ body {
   height: 7px;
   border-radius: 9999px;
   background: rgba(255, 255, 255, 0.95);
-  animation: snowfall 3.4s linear infinite;
 }
 
 .wx-bolt {
@@ -244,7 +279,6 @@ body {
   height: 64px;
   background: #fde047;
   clip-path: polygon(60% 0, 15% 55%, 45% 55%, 35% 100%, 85% 42%, 55% 42%);
-  animation: bolt 2.2s ease-in-out infinite;
   filter: drop-shadow(0 0 12px rgba(253, 224, 71, 0.9));
 }
 
@@ -258,11 +292,9 @@ body {
 }
 .fog-a {
   top: 30%;
-  animation: fog-slide 18s ease-in-out infinite alternate;
 }
 .fog-b {
   top: 60%;
-  animation: fog-slide 26s ease-in-out infinite alternate-reverse;
 }
 
 /* Animasi hanya bila pengguna tidak meminta reduced motion. */
@@ -275,6 +307,71 @@ body {
   }
   .animate-drift {
     animation: drift 30s linear infinite;
+  }
+  .animate-logo-enter {
+    animation: logo-enter 600ms ease-out both;
+  }
+  .animate-badge-pulse {
+    animation: badge-pulse 2s ease-in-out infinite;
+  }
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+  .animate-scroll-hint {
+    animation: scroll-hint 1.5s ease-in-out infinite;
+  }
+  .animate-slide-in-up {
+    animation: slide-in-up 400ms ease-out both;
+  }
+  .animate-shimmer-bar {
+    background-size: 200% 100%;
+    animation: shimmer-bar 2s linear infinite;
+  }
+
+  /* Efek cuaca: awan */
+  .wx-cloud-a {
+    animation: cloud-drift 22s ease-in-out infinite;
+  }
+  .wx-cloud-b {
+    animation: cloud-drift 32s ease-in-out infinite;
+    animation-delay: -10s;
+  }
+  .wx-cloud-c {
+    animation: cloud-drift 42s ease-in-out infinite;
+    animation-delay: -20s;
+  }
+
+  /* Efek cuaca: matahari */
+  .sun-rays {
+    animation: spin-slow 24s linear infinite;
+  }
+
+  /* Efek cuaca: bintang */
+  .wx-star {
+    animation: twinkle 2.8s ease-in-out infinite;
+  }
+
+  /* Efek cuaca: hujan */
+  .rain-drop {
+    animation: rainfall 0.9s linear infinite;
+  }
+
+  /* Efek cuaca: salju */
+  .snow-flake {
+    animation: snowfall 3.4s linear infinite;
+  }
+
+  /* Efek cuaca: petir */
+  .wx-bolt {
+    animation: bolt 2.2s ease-in-out infinite;
+  }
+
+  /* Efek cuaca: kabut */
+  .fog-a {
+    animation: fog-slide 18s ease-in-out infinite alternate;
+  }
+  .fog-b {
+    animation: fog-slide 26s ease-in-out infinite alternate-reverse;
   }
 }
 
@@ -305,6 +402,24 @@ body {
   }
   to {
     transform: translateX(calc(100vw + 320px));
+  }
+}
+
+@keyframes cloud-drift {
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+  25% {
+    transform: translateX(calc(25vw + 80px)) translateY(-6px);
+  }
+  50% {
+    transform: translateX(calc(50vw + 160px)) translateY(4px);
+  }
+  75% {
+    transform: translateX(calc(75vw + 240px)) translateY(-3px);
+  }
+  100% {
+    transform: translateX(calc(100vw + 320px)) translateY(0);
   }
 }
 
@@ -384,6 +499,64 @@ body {
   }
   to {
     background-position: -200% 0;
+  }
+}
+
+@keyframes slide-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 12px 4px rgba(52, 211, 153, 0.3);
+  }
+}
+
+@keyframes scroll-hint {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+}
+
+@keyframes shimmer-bar {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes logo-enter {
+  from {
+    opacity: 0;
+    transform: translateX(-12px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes badge-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
   }
 }
 

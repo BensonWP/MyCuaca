@@ -20,7 +20,7 @@ const COMPONENTS: Record<string, { label: string; limit: number }> = {
 };
 
 export default function AqiScale({ data }: { data: AirPollution }) {
-  const entry = data.list[0];
+  const entry = data.list?.[0];
   if (!entry) return null;
   const active = SCALE.find((item) => item.value === entry.main.aqi) ?? {
     value: entry.main.aqi,

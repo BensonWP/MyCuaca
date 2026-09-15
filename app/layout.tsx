@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/app/theme-provider";
 import { WeatherProvider } from "@/app/weather-provider";
+import { BmkgProvider } from "@/app/bmkg-provider";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -11,8 +12,8 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "MyCuaca, Prakiraan Cuaca Indonesia",
-  description: "Cuaca saat ini, prakiraan 5 hari, kualitas udara, dan peta cuaca untuk kota Anda.",
+  title: "MyCuaca ala BMKG, Cuaca Indonesia",
+  description: "Prakiraan BMKG per kelurahan, gempa terkini, peringatan dini, maritim, dan citra radar untuk Indonesia.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -26,7 +27,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <ThemeProvider>
           <WeatherProvider>
-            {children}
+            <BmkgProvider>
+              {children}
+            </BmkgProvider>
           </WeatherProvider>
         </ThemeProvider>
       </body>

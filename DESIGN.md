@@ -2,12 +2,13 @@
 
 ## Identitas
 
-MyCuaca adalah aplikasi cuaca harian berbahasa Indonesia. Kepribadiannya hidup tapi membantu: angka besar yang mudah dibaca sekilas, efek langit yang playful mengikuti kondisi nyata, kartu saran aktivitas, tanpa dekorasi tanpa data.
+MyCuaca adalah aplikasi cuaca Indonesia ala BMKG. Kepribadiannya institusional tapi ramah: breadcrumb wilayah resmi (Provinsi › Kota › Kecamatan › Kelurahan), hero navy `#0B3D91`, badge kategori resmi (gelombang, gempa, siaga), selalu menyebut sumber dan status non-resmi.
 
 ## Palet
 
 - Netral: dua lapis permukaan. Halaman `--background` (putih/zinc-950), kartu `--surface` (zinc-50/zinc-900). Hierarki dibangun lewat latar, bukan border; border hanya untuk kontrol interaktif, popover, dan alert status.
-- Aksen utama: sky-700, didukung gradien playful per konteks (biru hujan, oranye panas, ungu AQI buruk, teal angin). Gradien hanya untuk kartu saran, hero, dan badge — angka dan teks status tetap solid.
+- Institusional BMKG: navy `#0B3D91` untuk hero, tab aktif modul BMKG, dan badge resmi; merah untuk siaga/gempa M5+; ikon cuaca memakai gambar resmi `api-apps.bmkg.go.id`.
+- Atribusi wajib: tiap modul BMKG menyebut sumber + "aplikasi non-resmi".
 - Efek langit (`WeatherEffects.tsx`): awan drift, hujan, salju, bintang twinkle, sunburst, kabut — murni CSS, `aria-hidden`, mati total saat `prefers-reduced-motion`.
 - Latar hero mengikuti kondisi cuaca dari kode ikon OpenWeather (cerah, malam, berawan, hujan, badai, salju, kabut). Gradien vertikal meniru langit (zenith gelap ke horizon terang). Panel hero dan panel kota aktif sengaja theme-independent: salju tetap terang dan malam tetap gelap di kedua tema aplikasi, karena warnanya menceritakan cuaca, bukan tema. Warna teks hero solid (bukan transparan) dan tiap ujung gradien sudah diverifikasi lolos kontras AA.
 - Warna semantik (merah, amber, sky) hanya untuk status galat, offline, dan info, selalu disertai teks penjelasan, bukan warna saja.
